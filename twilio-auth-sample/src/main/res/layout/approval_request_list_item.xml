@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/approval_request_item_height"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/transactionLogo"
+        android:layout_width="@dimen/transaction_logo_width"
+        android:layout_height="@dimen/transaction_logo_height"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="@dimen/logo_margin_right"
+        android:layout_marginLeft="@dimen/logo_margin_left"
+        android:layout_marginRight="@dimen/logo_margin_right"
+        android:layout_marginStart="@dimen/logo_margin_left"
+        android:adjustViewBounds="true"
+        android:contentDescription="@string/transaction_logo_content_description"
+        android:scaleType="centerInside"
+        android:src="@drawable/default_logo_list_item" />
+
+    <LinearLayout
+        android:id="@+id/messageContainer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_toLeftOf="@+id/transactionTime"
+        android:layout_toRightOf="@+id/transactionLogo"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/transactionMessage"
+            style="@style/OneTouchPrimaryTextStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="You have requested to send 1.00 BTC from CEX" />
+
+        <TextView
+            android:id="@+id/transactionStatusMessage"
+            style="@style/OneTouchSecondaryTextStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="Expires on 17-Feb-2016 at 08:16 PM" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/transactionTime"
+        style="@style/OneTouchSecondaryTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginEnd="@dimen/transaction_time_margin_right"
+        android:layout_marginLeft="@dimen/transaction_time_margin_left"
+        android:layout_marginRight="@dimen/transaction_time_margin_right"
+        android:layout_marginStart="@dimen/transaction_time_margin_left"
+        android:layout_marginTop="@dimen/transaction_time_margin_top"
+        android:gravity="top|right|end"
+        tools:text="43 min" />
+
+    <View
+        android:id="@+id/transactionDivider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/lightGrey" />
+</RelativeLayout>

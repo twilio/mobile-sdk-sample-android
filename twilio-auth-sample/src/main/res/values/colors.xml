@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#313131</color>
+    <color name="colorAccent">#1b89cf</color>
+    <color name="lightGrey">#E0E0E0</color>
+    <color name="darkGrey">@android:color/darker_gray</color>
+    <color name="background_color">@android:color/white</color>
+
+    <color name="button_positive">#1b89cf</color>
+    <color name="button_positive_dark">#0D47A1</color>
+    <color name="button_negative">#D73131</color>
+    <color name="button_negative_dark">#D50000</color>
+
+    <!-- Registration screen -->
+    <color name="registration_title_bg">#313131</color>
+    <color name="registration_title_text_color">#ddffffff</color>
+
+    <!-- Approval Requests list -->
+    <color name="search_view_text_color">#6f6f6f</color>
+</resources>

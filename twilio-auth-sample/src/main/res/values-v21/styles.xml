@@ -1,0 +1,21 @@
+<resources>
+
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="BorderlessButtonStyle" parent="@style/Widget.AppCompat.Button.Borderless">
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textSize">@dimen/primary_action_text_size</item>
+    </style>
+
+    <style name="TabLayoutTextStyle" parent="TextAppearance.Design.Tab">
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textSize">@dimen/transaction_tab_text_size</item>
+    </style>
+
+    <style name="SanSerifMedium">
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+</resources>

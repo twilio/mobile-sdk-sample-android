@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_color"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.twilio.authsample.approvalrequests.detail.ApprovalRequestDetailActivity">
+
+    <ImageView
+        android:id="@+id/transactionImage"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/transaction_image_height"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
+        android:adjustViewBounds="true"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:scaleType="centerInside"
+        android:src="@drawable/default_logo" />
+
+    <TextView
+        android:id="@+id/transactionMessage"
+        style="@style/OneTouchPrimaryTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/transactionImage"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        tools:text="You have requested to send 1.00 BTC from CEX" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/approvalRequestAttributes"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/buttonBarContainer"
+        android:layout_below="@+id/transactionMessage"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:scrollbars="vertical" />
+
+    <FrameLayout
+        android:id="@+id/buttonBarContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true">
+
+        <LinearLayout
+            android:id="@+id/buttonBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <View
+                android:id="@+id/buttonBarSeparatorHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/lightGrey" />
+
+            <LinearLayout
+                android:id="@+id/buttonContainer"
+                style="?android:attr/buttonBarStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="1.0">
+
+                <Button
+                    android:id="@+id/approveButton"
+                    style="@style/BorderlessButtonStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.5"
+                    android:text="@string/approve_button_label"
+                    android:textColor="@drawable/selector_color_positive" />
+
+                <View
+                    android:id="@+id/buttonBarSeparatorVertical"
+                    style="?android:attr/borderlessButtonStyle"
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:background="@color/lightGrey" />
+
+                <Button
+                    android:id="@+id/denyButton"
+                    style="@style/BorderlessButtonStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.5"
+                    android:text="@string/deny_button_label"
+                    android:textColor="@drawable/selector_color_negative" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/transactionStatusContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="@dimen/activity_vertical_margin"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/transactionStatusMessage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxLines="2"
+                android:textColor="@color/darkGrey"
+                android:textSize="@dimen/transaction_primary_text_size"
+                tools:text="Transaction expired on 17-Feb-2016 at 08:16 PM" />
+
+            <TextView
+                android:id="@+id/transactionWarning"
+                style="@style/OneTouchPrimaryTextStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/transaction_not_updatable_warning" />
+        </LinearLayout>
+
+    </FrameLayout>
+</RelativeLayout>
