@@ -15,7 +15,7 @@ import android.util.Log;
 import com.twilio.auth.TwilioAuth;
 import com.twilio.auth.external.ApprovalRequest;
 import com.twilio.auth.external.ApprovalRequests;
-import com.twilio.auth.external.AuthyException;
+import com.twilio.auth.external.TwilioException;
 import com.twilio.authsample.App;
 import com.twilio.authsample.R;
 import com.twilio.authsample.approvalrequests.detail.ApprovalRequestDetailActivity;
@@ -112,7 +112,7 @@ public class MessagingService extends FirebaseMessagingService {
                     null);
 
             return approvalRequests.getApprovalRequestById(approvalRequestUuid);
-        } catch (AuthyException e) {
+        } catch (TwilioException e) {
             return null;
         }
     }

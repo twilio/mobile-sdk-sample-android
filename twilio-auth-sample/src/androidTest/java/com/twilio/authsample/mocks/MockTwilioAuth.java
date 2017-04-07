@@ -8,7 +8,7 @@ import com.twilio.auth.TwilioAuth;
 import com.twilio.auth.external.ApprovalRequest;
 import com.twilio.auth.external.ApprovalRequestStatus;
 import com.twilio.auth.external.ApprovalRequests;
-import com.twilio.auth.external.AuthyException;
+import com.twilio.auth.external.TwilioException;
 import com.twilio.auth.external.TimeInterval;
 
 import java.util.List;
@@ -45,14 +45,14 @@ public class MockTwilioAuth extends TwilioAuth {
     @Override
     public void approveRequest(@NonNull ApprovalRequest approvalRequest) {
         if (isErrorOnUpdate()) {
-            throw new AuthyException("errorOnUpdate is true", AuthyException.APPROVAL_REQUEST_ERROR);
+            throw new TwilioException("errorOnUpdate is true", TwilioException.APPROVAL_REQUEST_ERROR);
         }
     }
 
     @Override
     public void denyRequest(@NonNull ApprovalRequest approvalRequest) {
         if (isErrorOnUpdate()) {
-            throw new AuthyException("errorOnUpdate is true", AuthyException.APPROVAL_REQUEST_ERROR);
+            throw new TwilioException("errorOnUpdate is true", TwilioException.APPROVAL_REQUEST_ERROR);
         }
     }
 

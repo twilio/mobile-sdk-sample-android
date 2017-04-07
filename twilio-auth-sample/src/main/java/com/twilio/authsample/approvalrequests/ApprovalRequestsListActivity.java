@@ -21,7 +21,7 @@ import com.twilio.auth.TwilioAuth;
 import com.twilio.auth.external.ApprovalRequest;
 import com.twilio.auth.external.ApprovalRequestStatus;
 import com.twilio.auth.external.ApprovalRequests;
-import com.twilio.auth.external.AuthyException;
+import com.twilio.auth.external.TwilioException;
 import com.twilio.authsample.App;
 import com.twilio.authsample.R;
 import com.twilio.authsample.approvalrequests.adapters.ApprovalRequestsAdapter;
@@ -194,7 +194,7 @@ public class ApprovalRequestsListActivity extends AppCompatActivity implements A
     @Override
     public void onError(Exception exception) {
         Log.e(ApprovalRequestsListActivity.class.getSimpleName(), "Error while getting approval requests for device", exception);
-        String errorMessage = exception instanceof AuthyException ? ((AuthyException) exception).getBody() : getString(R.string.approval_request_fetch_error);
+        String errorMessage = exception instanceof TwilioException ? ((TwilioException) exception).getBody() : getString(R.string.approval_request_fetch_error);
         final Snackbar snackbar = messageHelper.show(viewPager, errorMessage);
         bus.post(new ApprovalRequestsUpdatedEvent(true));
 
