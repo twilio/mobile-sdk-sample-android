@@ -1,4 +1,4 @@
-# Twilio Authy - Android SDK Sample
+# TwilioAuth SDK - Android Sample app
 
 Welcome to the Twilio Authy Android SDK Sample application. This application demonstrates how to use the mobile SDK inside an Android app.
 
