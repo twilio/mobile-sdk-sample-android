@@ -15,14 +15,6 @@ buildscript {
 
 allprojects {
     repositories {
-        // TODO: remove when we release publicly
-        maven {
-            url "http://twilio.bintray.com/releases"
-            credentials {
-                username BINTRAY_USER
-                password BINTRAY_APIKEY
-            }
-        }
         jcenter()
     }
 }
