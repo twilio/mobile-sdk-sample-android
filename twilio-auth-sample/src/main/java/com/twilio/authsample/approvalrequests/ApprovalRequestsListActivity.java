@@ -2,6 +2,7 @@ package com.twilio.authsample.approvalrequests;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
@@ -17,11 +18,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import android.widget.TextView;
+import android.widget.Toast;
+import com.authy.commonandroid.external.TwilioException;
 import com.twilio.auth.TwilioAuth;
 import com.twilio.auth.external.ApprovalRequest;
 import com.twilio.auth.external.ApprovalRequestStatus;
 import com.twilio.auth.external.ApprovalRequests;
-import com.twilio.auth.external.TwilioException;
 import com.twilio.authsample.App;
 import com.twilio.authsample.R;
 import com.twilio.authsample.approvalrequests.adapters.ApprovalRequestsAdapter;
@@ -55,6 +58,8 @@ public class ApprovalRequestsListActivity extends AppCompatActivity implements A
      * The {@link ViewPager} that will host the section contents.
      */
     private ViewPager viewPager;
+
+    private TextView totpTextView;
 
     /**
      * List of approval requests to display
@@ -93,6 +98,7 @@ public class ApprovalRequestsListActivity extends AppCompatActivity implements A
         viewPager = (ViewPager) findViewById(R.id.container);
         viewPager.setAdapter(sectionsPagerAdapter);
 
+        totpTextView = (TextView) findViewById(R.id.totp);
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
         tabLayout.setTabTextColors(ContextCompat.getColor(this, android.R.color.white), ContextCompat.getColor(this, R.color.colorAccent));
@@ -110,6 +116,21 @@ public class ApprovalRequestsListActivity extends AppCompatActivity implements A
         bus.register(this);
         viewPager.addOnPageChangeListener(sectionsPagerAdapter);
         fetchApprovalRequests();
+
+
+        new AsyncTask<Void, Void, String>() {
+            @Override
+            protected String doInBackground(Void... voids) {
+                return twilioAuth.generateTotpWithSync();
+            }
+
+            @Override
+            protected void onPostExecute(String totp) {
+                super.onPostExecute(totp);
+
+                totpTextView.setText("TOTP = " + totp);
+            }
+        }.execute();
     }
 
     private void fetchApprovalRequests() {
