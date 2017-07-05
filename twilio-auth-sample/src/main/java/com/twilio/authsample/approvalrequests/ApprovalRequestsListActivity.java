@@ -17,11 +17,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.authy.commonandroid.external.TwilioException;
 import com.twilio.auth.TwilioAuth;
 import com.twilio.auth.external.ApprovalRequest;
 import com.twilio.auth.external.ApprovalRequestStatus;
 import com.twilio.auth.external.ApprovalRequests;
-import com.twilio.auth.external.TwilioException;
 import com.twilio.authsample.App;
 import com.twilio.authsample.R;
 import com.twilio.authsample.approvalrequests.adapters.ApprovalRequestsAdapter;

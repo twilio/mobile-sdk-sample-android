@@ -4,11 +4,11 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.authy.commonandroid.external.TwilioException;
 import com.twilio.auth.TwilioAuth;
 import com.twilio.auth.external.ApprovalRequest;
 import com.twilio.auth.external.ApprovalRequestStatus;
 import com.twilio.auth.external.ApprovalRequests;
-import com.twilio.auth.external.TwilioException;
 import com.twilio.auth.external.TimeInterval;
 
 import java.util.List;
