@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -20,8 +21,6 @@ import android.view.View;
 
 import com.authy.commonandroid.external.TwilioException;
 import android.widget.TextView;
-import android.widget.Toast;
-import com.authy.commonandroid.external.TwilioException;
 import com.twilio.auth.TwilioAuth;
 import com.twilio.auth.external.ApprovalRequest;
 import com.twilio.auth.external.ApprovalRequestStatus;
@@ -45,6 +44,8 @@ import java.util.List;
 
 public class ApprovalRequestsListActivity extends AppCompatActivity implements ApprovalRequestsListFragment.ApprovalRequestsSource, ApprovalRequestsAdapter.ApprovalRequestSelectedListener, AuthyActivityListener<ApprovalRequests> {
 
+    private final static int TOTP_UPDATE_INTERVAL_MILLIS = 20000;
+
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
      * fragments for each of the sections. We use a
@@ -60,6 +61,7 @@ public class ApprovalRequestsListActivity extends AppCompatActivity implements A
      */
     private ViewPager viewPager;
 
+    Handler handler = new Handler();
     private TextView totpTextView;
 
     /**
@@ -71,6 +73,7 @@ public class ApprovalRequestsListActivity extends AppCompatActivity implements A
     private Bus bus;
     private TabLayout tabLayout;
     private MessageHelper messageHelper;
+
 
     /**
      * Creates an intent to launch the ApprovalRequestsListActivity
@@ -109,6 +112,19 @@ public class ApprovalRequestsListActivity extends AppCompatActivity implements A
         bus = ((App) getApplicationContext()).getBus();
 
         messageHelper = new MessageHelper();
+
+        startTOTPGeneration();
+    }
+
+    private void startTOTPGeneration() {
+
+        handler.postDelayed(new Runnable(){
+            public void run(){
+                //do something
+                updateTOTP();
+                handler.postDelayed(this, TOTP_UPDATE_INTERVAL_MILLIS);
+            }
+        }, TOTP_UPDATE_INTERVAL_MILLIS);
     }
 
     @Override
@@ -119,6 +135,10 @@ public class ApprovalRequestsListActivity extends AppCompatActivity implements A
         fetchApprovalRequests();
 
 
+        updateTOTP();
+    }
+
+    private void updateTOTP() {
         new AsyncTask<Void, Void, String>() {
             @Override
             protected String doInBackground(Void... voids) {
