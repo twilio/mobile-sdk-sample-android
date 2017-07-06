@@ -2,7 +2,8 @@ package com.twilio.authsample.approvalrequests;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.Snackbar;
@@ -18,9 +19,10 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-
-import com.authy.commonandroid.external.TwilioException;
 import android.widget.TextView;
+import com.authy.commonandroid.external.TwilioException;
+import com.squareup.otto.Bus;
+import com.squareup.otto.Subscribe;
 import com.twilio.auth.TwilioAuth;
 import com.twilio.auth.external.ApprovalRequest;
 import com.twilio.auth.external.ApprovalRequestStatus;
@@ -35,8 +37,6 @@ import com.twilio.authsample.registration.RegistrationActivity;
 import com.twilio.authsample.utils.AuthyActivityListener;
 import com.twilio.authsample.utils.AuthyTask;
 import com.twilio.authsample.utils.MessageHelper;
-import com.squareup.otto.Bus;
-import com.squareup.otto.Subscribe;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -74,6 +74,18 @@ public class ApprovalRequestsListActivity extends AppCompatActivity implements A
     private TabLayout tabLayout;
     private MessageHelper messageHelper;
 
+    private AuthyActivityListener<String> totpListener = new AuthyActivityListener<String>() {
+        @Override
+        public void onSuccess(String totp) {
+            totpTextView.setText("TOTP = " + totp);
+        }
+
+        @Override
+        public void onError(Exception exception) {
+            Log.e(ApprovalRequestsListActivity.class.getSimpleName(), "Error while getting approval requests for device", exception);
+            messageHelper.show(viewPager, exception.getMessage());
+        }
+    };
 
     /**
      * Creates an intent to launch the ApprovalRequestsListActivity
@@ -112,15 +124,13 @@ public class ApprovalRequestsListActivity extends AppCompatActivity implements A
         bus = ((App) getApplicationContext()).getBus();
 
         messageHelper = new MessageHelper();
-
-        startTOTPGeneration();
     }
 
     private void startTOTPGeneration() {
+        updateTOTP();
 
-        handler.postDelayed(new Runnable(){
-            public void run(){
-                //do something
+        handler.postDelayed(new Runnable() {
+            public void run() {
                 updateTOTP();
                 handler.postDelayed(this, TOTP_UPDATE_INTERVAL_MILLIS);
             }
@@ -135,21 +145,19 @@ public class ApprovalRequestsListActivity extends AppCompatActivity implements A
         fetchApprovalRequests();
 
 
-        updateTOTP();
+        startTOTPGeneration();
     }
 
     private void updateTOTP() {
-        new AsyncTask<Void, Void, String>() {
-            @Override
-            protected String doInBackground(Void... voids) {
-                return twilioAuth.generateTotpWithSync();
-            }
+        new AuthyTask<String>(totpListener) {
 
             @Override
-            protected void onPostExecute(String totp) {
-                super.onPostExecute(totp);
-
-                totpTextView.setText("TOTP = " + totp);
+            public String executeOnBackground() {
+                if (isNetworkAvailable()) {
+                    return twilioAuth.generateTotpWithSync();
+                } else {
+                    return twilioAuth.generateTotp();
+                }
             }
         }.execute();
     }
@@ -261,6 +269,14 @@ public class ApprovalRequestsListActivity extends AppCompatActivity implements A
     public void onRefreshApprovalRequestEvent(RefreshApprovalRequestsEvent refreshApprovalRequestsEvent) {
         fetchApprovalRequests();
     }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
 
     /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
