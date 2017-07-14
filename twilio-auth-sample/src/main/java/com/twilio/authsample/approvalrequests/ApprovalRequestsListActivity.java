@@ -127,11 +127,11 @@ public class ApprovalRequestsListActivity extends AppCompatActivity implements A
     }
 
     private void startTOTPGeneration() {
-        updateTOTP();
+        updateTOTP(false);
 
         handler.postDelayed(new Runnable() {
             public void run() {
-                updateTOTP();
+                updateTOTP(false);
                 handler.postDelayed(this, TOTP_UPDATE_INTERVAL_MILLIS);
             }
         }, TOTP_UPDATE_INTERVAL_MILLIS);
@@ -148,12 +148,12 @@ public class ApprovalRequestsListActivity extends AppCompatActivity implements A
         startTOTPGeneration();
     }
 
-    private void updateTOTP() {
+    private void updateTOTP(final boolean forceUpdate) {
         new AuthyTask<String>(totpListener) {
 
             @Override
             public String executeOnBackground() {
-                if (isNetworkAvailable()) {
+                if (forceUpdate && isNetworkAvailable()) {
                     return twilioAuth.generateTotpWithSync();
                 } else {
                     return twilioAuth.generateTotp();
@@ -192,6 +192,7 @@ public class ApprovalRequestsListActivity extends AppCompatActivity implements A
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.menu_refresh) {
             fetchApprovalRequests();
+            updateTOTP(true);
         }
         return super.onOptionsItemSelected(item);
     }
