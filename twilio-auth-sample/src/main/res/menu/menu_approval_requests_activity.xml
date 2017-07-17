@@ -8,7 +8,7 @@
         app:showAsAction="always" />
 
     <item
-            android:id="@+id/menu_clear"
-            android:title="@string/menu_clear_data"
-            app:showAsAction="never"/>
+        android:id="@+id/menu_clear"
+        android:title="@string/menu_clear_data"
+        app:showAsAction="never" />
 </menu>

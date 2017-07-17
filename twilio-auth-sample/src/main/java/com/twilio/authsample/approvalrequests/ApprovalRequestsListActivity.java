@@ -20,6 +20,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+
 import com.authy.commonandroid.external.TwilioException;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
@@ -48,7 +49,7 @@ public class ApprovalRequestsListActivity extends AppCompatActivity implements A
         ClearDataConfirmationDialog.OnClearDataConfirmationListener {
 
     private final static int TOTP_UPDATE_INTERVAL_MILLIS = 20000;
-
+    Handler handler = new Handler();
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
      * fragments for each of the sections. We use a
@@ -58,13 +59,10 @@ public class ApprovalRequestsListActivity extends AppCompatActivity implements A
      * {@link android.support.v4.app.FragmentStatePagerAdapter}.
      */
     private SectionsPagerAdapter sectionsPagerAdapter;
-
     /**
      * The {@link ViewPager} that will host the section contents.
      */
     private ViewPager viewPager;
-
-    Handler handler = new Handler();
     private TextView totpTextView;
 
     /**
