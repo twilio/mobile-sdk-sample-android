@@ -192,8 +192,8 @@ public class ApprovalRequestsListActivity extends AppCompatActivity implements A
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.menu_refresh) {
-            fetchApprovalRequests();
             updateTOTP(true);
+            fetchApprovalRequests();
         } else if (item.getItemId() == R.id.menu_clear) {
             ClearDataConfirmationDialog clearDataConfirmationDialog = new ClearDataConfirmationDialog();
             clearDataConfirmationDialog.show(getSupportFragmentManager(), ClearDataConfirmationDialog.class.getSimpleName());
