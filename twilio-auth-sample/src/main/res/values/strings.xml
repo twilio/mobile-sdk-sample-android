@@ -10,6 +10,8 @@
     <string name="fragment_approval_requests_archive_title">ARCHIVE</string>
     <string name="transaction_logo_content_description">Transaction logo</string>
     <string name="menu_refresh_title">Refresh</string>
+    <string name="menu_clear_data">Clear Data</string>
+    <string name="dialog_confirm_clear_data">Are you sure you want to clear all local data?</string>
     <string name="expires_at_message">Expires at %1$s</string>
     <string name="expired_on_message">Expired on %1$s</string>
     <string name="transaction_expired_title">Expired</string>

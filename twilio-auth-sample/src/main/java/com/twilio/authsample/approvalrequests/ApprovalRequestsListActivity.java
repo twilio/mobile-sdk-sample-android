@@ -34,6 +34,7 @@ import com.twilio.authsample.approvalrequests.detail.ApprovalRequestDetailActivi
 import com.twilio.authsample.approvalrequests.events.ApprovalRequestsUpdatedEvent;
 import com.twilio.authsample.approvalrequests.events.RefreshApprovalRequestsEvent;
 import com.twilio.authsample.registration.RegistrationActivity;
+import com.twilio.authsample.ui.ClearDataConfirmationDialog;
 import com.twilio.authsample.utils.AuthyActivityListener;
 import com.twilio.authsample.utils.AuthyTask;
 import com.twilio.authsample.utils.MessageHelper;
@@ -42,7 +43,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class ApprovalRequestsListActivity extends AppCompatActivity implements ApprovalRequestsListFragment.ApprovalRequestsSource, ApprovalRequestsAdapter.ApprovalRequestSelectedListener, AuthyActivityListener<ApprovalRequests> {
+public class ApprovalRequestsListActivity extends AppCompatActivity implements ApprovalRequestsListFragment.ApprovalRequestsSource,
+        ApprovalRequestsAdapter.ApprovalRequestSelectedListener, AuthyActivityListener<ApprovalRequests>,
+        ClearDataConfirmationDialog.OnClearDataConfirmationListener {
 
     private final static int TOTP_UPDATE_INTERVAL_MILLIS = 20000;
 
@@ -193,6 +196,9 @@ public class ApprovalRequestsListActivity extends AppCompatActivity implements A
         if (item.getItemId() == R.id.menu_refresh) {
             fetchApprovalRequests();
             updateTOTP(true);
+        } else if (item.getItemId() == R.id.menu_clear) {
+            ClearDataConfirmationDialog clearDataConfirmationDialog = new ClearDataConfirmationDialog();
+            clearDataConfirmationDialog.show(getSupportFragmentManager(), ClearDataConfirmationDialog.class.getSimpleName());
         }
         return super.onOptionsItemSelected(item);
     }
@@ -219,6 +225,11 @@ public class ApprovalRequestsListActivity extends AppCompatActivity implements A
         fetchApprovalRequests();
     }
 
+    @Override
+    public void onClearDataRequested() {
+        twilioAuth.clearLocalData();
+        RegistrationActivity.startRegistrationActivity(this, R.string.registration_error_device_deleted);
+    }
 
     public ApprovalRequests getApprovalRequests() {
         if (approvalRequests == null) {

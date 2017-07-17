@@ -6,4 +6,9 @@
         android:icon="@drawable/ic_action_refresh"
         android:title="@string/menu_refresh_title"
         app:showAsAction="always" />
+
+    <item
+            android:id="@+id/menu_clear"
+            android:title="@string/menu_clear_data"
+            app:showAsAction="never"/>
 </menu>
