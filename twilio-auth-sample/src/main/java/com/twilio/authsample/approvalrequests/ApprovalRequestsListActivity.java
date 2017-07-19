@@ -16,8 +16,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-
 import com.authy.commonandroid.external.TwilioException;
+import com.squareup.otto.Bus;
+import com.squareup.otto.Subscribe;
 import com.twilio.auth.TwilioAuth;
 import com.twilio.auth.external.ApprovalRequest;
 import com.twilio.auth.external.ApprovalRequestStatus;
@@ -29,17 +30,18 @@ import com.twilio.authsample.approvalrequests.detail.ApprovalRequestDetailActivi
 import com.twilio.authsample.approvalrequests.events.ApprovalRequestsUpdatedEvent;
 import com.twilio.authsample.approvalrequests.events.RefreshApprovalRequestsEvent;
 import com.twilio.authsample.registration.RegistrationActivity;
+import com.twilio.authsample.ui.ClearDataConfirmationDialog;
 import com.twilio.authsample.utils.AuthyActivityListener;
 import com.twilio.authsample.utils.AuthyTask;
 import com.twilio.authsample.utils.MessageHelper;
-import com.squareup.otto.Bus;
-import com.squareup.otto.Subscribe;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class ApprovalRequestsListActivity extends AppCompatActivity implements ApprovalRequestsListFragment.ApprovalRequestsSource, ApprovalRequestsAdapter.ApprovalRequestSelectedListener, AuthyActivityListener<ApprovalRequests> {
+public class ApprovalRequestsListActivity extends AppCompatActivity implements ApprovalRequestsListFragment.ApprovalRequestsSource,
+        ApprovalRequestsAdapter.ApprovalRequestSelectedListener, AuthyActivityListener<ApprovalRequests>,
+        ClearDataConfirmationDialog.OnClearDataConfirmationListener {
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -142,6 +144,9 @@ public class ApprovalRequestsListActivity extends AppCompatActivity implements A
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.menu_refresh) {
             fetchApprovalRequests();
+        } else if (item.getItemId() == R.id.menu_clear) {
+            ClearDataConfirmationDialog clearDataConfirmationDialog = new ClearDataConfirmationDialog();
+            clearDataConfirmationDialog.show(getSupportFragmentManager(), ClearDataConfirmationDialog.class.getSimpleName());
         }
         return super.onOptionsItemSelected(item);
     }
@@ -168,6 +173,11 @@ public class ApprovalRequestsListActivity extends AppCompatActivity implements A
         fetchApprovalRequests();
     }
 
+    @Override
+    public void onClearDataRequested() {
+        twilioAuth.clearLocalData();
+        RegistrationActivity.startRegistrationActivity(this, R.string.registration_error_device_deleted);
+    }
 
     public ApprovalRequests getApprovalRequests() {
         if (approvalRequests == null) {
