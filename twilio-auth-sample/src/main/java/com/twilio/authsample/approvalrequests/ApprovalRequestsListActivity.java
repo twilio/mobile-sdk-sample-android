@@ -2,8 +2,6 @@ package com.twilio.authsample.approvalrequests;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.Snackbar;
@@ -28,6 +26,7 @@ import com.twilio.auth.TwilioAuth;
 import com.twilio.auth.external.ApprovalRequest;
 import com.twilio.auth.external.ApprovalRequestStatus;
 import com.twilio.auth.external.ApprovalRequests;
+import com.twilio.auth.external.TOTPCallback;
 import com.twilio.authsample.App;
 import com.twilio.authsample.R;
 import com.twilio.authsample.approvalrequests.adapters.ApprovalRequestsAdapter;
@@ -46,7 +45,8 @@ import java.util.List;
 
 public class ApprovalRequestsListActivity extends AppCompatActivity implements ApprovalRequestsListFragment.ApprovalRequestsSource,
         ApprovalRequestsAdapter.ApprovalRequestSelectedListener, AuthyActivityListener<ApprovalRequests>,
-        ClearDataConfirmationDialog.OnClearDataConfirmationListener {
+        ClearDataConfirmationDialog.OnClearDataConfirmationListener,
+        TOTPCallback {
 
     private final static int TOTP_UPDATE_INTERVAL_MILLIS = 20000;
     Handler handler = new Handler();
@@ -75,16 +75,10 @@ public class ApprovalRequestsListActivity extends AppCompatActivity implements A
     private TabLayout tabLayout;
     private MessageHelper messageHelper;
 
-    private AuthyActivityListener<String> totpListener = new AuthyActivityListener<String>() {
-        @Override
-        public void onSuccess(String totp) {
-            totpTextView.setText("TOTP = " + totp);
-        }
-
-        @Override
-        public void onError(Exception exception) {
-            Log.e(ApprovalRequestsListActivity.class.getSimpleName(), "Error while getting approval requests for device", exception);
-            messageHelper.show(viewPager, exception.getMessage());
+    Runnable updateTOTPRunnable = new Runnable() {
+        public void run() {
+            updateTOTP();
+            handler.postDelayed(this, TOTP_UPDATE_INTERVAL_MILLIS);
         }
     };
 
@@ -128,14 +122,10 @@ public class ApprovalRequestsListActivity extends AppCompatActivity implements A
     }
 
     private void startTOTPGeneration() {
-        updateTOTP(false);
+        updateTOTP();
 
-        handler.postDelayed(new Runnable() {
-            public void run() {
-                updateTOTP(false);
-                handler.postDelayed(this, TOTP_UPDATE_INTERVAL_MILLIS);
-            }
-        }, TOTP_UPDATE_INTERVAL_MILLIS);
+        handler.postDelayed(updateTOTPRunnable,
+                TOTP_UPDATE_INTERVAL_MILLIS);
     }
 
     @Override
@@ -149,18 +139,19 @@ public class ApprovalRequestsListActivity extends AppCompatActivity implements A
         startTOTPGeneration();
     }
 
-    private void updateTOTP(final boolean forceUpdate) {
-        new AuthyTask<String>(totpListener) {
+    @Override
+    public void onTOTPError(Exception exception) {
+        Log.e(ApprovalRequestsListActivity.class.getSimpleName(), "Error while generating TOTP", exception);
+        messageHelper.show(viewPager, exception.getMessage());
+    }
 
-            @Override
-            public String executeOnBackground() {
-                if (forceUpdate && isNetworkAvailable()) {
-                    return twilioAuth.generateTotpWithSync();
-                } else {
-                    return twilioAuth.generateTotp();
-                }
-            }
-        }.execute();
+    @Override
+    public void onTOTPReceived(String totp) {
+        totpTextView.setText("TOTP = " + totp);
+    }
+
+    private void updateTOTP() {
+        twilioAuth.getTOTP(this);
     }
 
     private void fetchApprovalRequests() {
@@ -180,6 +171,7 @@ public class ApprovalRequestsListActivity extends AppCompatActivity implements A
         viewPager.removeOnPageChangeListener(sectionsPagerAdapter);
         messageHelper.dismiss();
         bus.unregister(this);
+        handler.removeCallbacks(updateTOTPRunnable);
         super.onStop();
     }
 
@@ -192,7 +184,7 @@ public class ApprovalRequestsListActivity extends AppCompatActivity implements A
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.menu_refresh) {
-            updateTOTP(true);
+            updateTOTP();
             fetchApprovalRequests();
         } else if (item.getItemId() == R.id.menu_clear) {
             ClearDataConfirmationDialog clearDataConfirmationDialog = new ClearDataConfirmationDialog();
@@ -279,14 +271,6 @@ public class ApprovalRequestsListActivity extends AppCompatActivity implements A
     public void onRefreshApprovalRequestEvent(RefreshApprovalRequestsEvent refreshApprovalRequestsEvent) {
         fetchApprovalRequests();
     }
-
-    private boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager
-                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
-    }
-
 
     /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
