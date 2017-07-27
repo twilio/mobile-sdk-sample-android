@@ -1,2 +1,1 @@
-include ':twilio-auth-sample', ':auth'
-project(':auth').projectDir = new File('../authy-sdk-dev/twilio-auth/auth')
+include ':twilio-auth-sample'
