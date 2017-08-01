@@ -14,11 +14,12 @@
 
         <TextView
             android:id="@+id/totp"
+            style="@style/SanSerifMedium"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:textAppearance="?android:textAppearanceLarge"
+            android:layout_marginBottom="32dp"
             android:textColor="@android:color/black"
+            android:textSize="64sp"
             tools:text="12345678" />
 
         <com.twilio.authsample.ui.views.AuthyTimerView
