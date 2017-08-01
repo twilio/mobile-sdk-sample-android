@@ -21,6 +21,7 @@ import com.twilio.auth.TwilioAuth;
 import com.twilio.authsample.App;
 import com.twilio.authsample.R;
 import com.twilio.authsample.approvalrequests.ApprovalRequestsListActivity;
+import com.twilio.authsample.main.MainActivity;
 import com.twilio.authsample.network.SampleApi;
 import com.twilio.authsample.network.model.RegistrationTokenResponse;
 import com.twilio.authsample.utils.AuthyActivityListener;
@@ -59,7 +60,7 @@ public class RegistrationActivity extends AppCompatActivity {
         @Override
         public void onSuccess(Void aVoid) {
             updateProgressDialog(false);
-            startApprovalRequestActivity();
+            startMainActivity();
         }
 
         @Override
@@ -78,7 +79,7 @@ public class RegistrationActivity extends AppCompatActivity {
         initData();
 
         if (twilioAuth.isDeviceRegistered()) {
-            startApprovalRequestActivity();
+            startMainActivity();
         } else {
             startRegistrationProcess();
         }
@@ -99,9 +100,9 @@ public class RegistrationActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
-    public void startApprovalRequestActivity() {
-        Intent approvalRequestsIntent = new Intent(RegistrationActivity.this, ApprovalRequestsListActivity.class);
-        startActivity(approvalRequestsIntent);
+    public void startMainActivity() {
+        Intent intent = new Intent(RegistrationActivity.this, MainActivity.class);
+        startActivity(intent);
         finish();
     }
 
