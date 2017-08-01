@@ -4,6 +4,7 @@
     <string name="loading_msg">Loading…</string>
     <string name="error_no_connection">Please make sure you have internet connection</string>
 
+    <!-- Main Activity -->
     <string name="menu_bottom_navigation_tokens">Tokens</string>
     <string name="menu_bottom_navigation_requests">Requests</string>
 
