@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
 import com.twilio.authsample.R;
+import com.twilio.authsample.approvalrequests.RequestsFragment;
 import com.twilio.authsample.totp.TokensFragment;
 
 public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
@@ -44,6 +45,11 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 getSupportActionBar().setTitle(R.string.menu_bottom_navigation_tokens);
                 return true;
             case R.id.menu_requests:
+                RequestsFragment requestsFragment = RequestsFragment.newInstance();
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.container, requestsFragment)
+                        .commit();
                 getSupportActionBar().setTitle(R.string.menu_bottom_navigation_requests);
                 return true;
         }
