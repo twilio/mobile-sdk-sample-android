@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Twilio Auth SDK Sample</string>
+    <string name="app_name">TwilioAuth SDK Sample</string>
 
     <string name="loading_msg">Loading…</string>
     <string name="error_no_connection">Please make sure you have internet connection</string>
