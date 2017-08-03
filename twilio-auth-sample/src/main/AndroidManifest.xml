@@ -23,6 +23,7 @@
         <activity
             android:name=".main.MainActivity"
             android:label="@string/menu_navigation_requests"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".approvalrequests.detail.ApprovalRequestDetailActivity"
