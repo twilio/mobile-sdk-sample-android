@@ -1,19 +1,63 @@
 package com.twilio.authsample.approvalrequests;
 
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.authy.commonandroid.external.TwilioException;
+import com.squareup.otto.Bus;
+import com.squareup.otto.Subscribe;
+import com.twilio.auth.TwilioAuth;
+import com.twilio.auth.external.ApprovalRequest;
+import com.twilio.auth.external.ApprovalRequestStatus;
+import com.twilio.auth.external.ApprovalRequests;
+import com.twilio.authsample.App;
 import com.twilio.authsample.R;
+import com.twilio.authsample.approvalrequests.adapters.ApprovalRequestsAdapter;
+import com.twilio.authsample.approvalrequests.detail.ApprovalRequestDetailActivity;
+import com.twilio.authsample.approvalrequests.events.ApprovalRequestsUpdatedEvent;
+import com.twilio.authsample.approvalrequests.events.RefreshApprovalRequestsEvent;
+import com.twilio.authsample.registration.RegistrationActivity;
+import com.twilio.authsample.utils.AuthyActivityListener;
+import com.twilio.authsample.utils.AuthyTask;
+import com.twilio.authsample.utils.MessageHelper;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class RequestsFragment extends Fragment {
+public class RequestsFragment extends Fragment implements
+        AuthyActivityListener<ApprovalRequests>,
+        ApprovalRequestsListFragment.ApprovalRequestsSource,
+        ApprovalRequestsAdapter.ApprovalRequestSelectedListener {
 
+
+    private SectionsPagerAdapter sectionsPagerAdapter;
+    private ViewPager viewPager;
+    private TabLayout tabLayout;
+
+    private TwilioAuth twilioAuth;
+    private Bus bus;
+    private MessageHelper messageHelper;
+
+    private ApprovalRequests approvalRequests;
 
     public RequestsFragment() {
         // Required empty public constructor
@@ -31,8 +75,201 @@ public class RequestsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_requests, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_requests, container, false);
+        initViews(rootView);
+        initVars();
+        return rootView;
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        bus.register(this);
+        viewPager.addOnPageChangeListener(sectionsPagerAdapter);
+        fetchApprovalRequests();
+    }
+
+    @Override
+    public void onStop() {
+        viewPager.removeOnPageChangeListener(sectionsPagerAdapter);
+        messageHelper.dismiss();
+        bus.unregister(this);
+        super.onStop();
+    }
+
+    @Override
+    public void onSuccess(ApprovalRequests result) {
+        approvalRequests = result;
+        if (getActivity() != null && !getActivity().isFinishing()) {
+            sectionsPagerAdapter.notifyDataSetChanged();
+            bus.post(new ApprovalRequestsUpdatedEvent(true));
+        }
+    }
+
+    @Override
+    public void onError(Exception exception) {
+        Log.e(RequestsFragment.class.getSimpleName(), "Error while getting approval requests for device", exception);
+        String errorMessage = exception instanceof TwilioException ? ((TwilioException) exception).getBody() : getString(R.string.approval_request_fetch_error);
+        final Snackbar snackbar = messageHelper.show(viewPager, errorMessage);
+        bus.post(new ApprovalRequestsUpdatedEvent(true));
+
+        if (!twilioAuth.isDeviceRegistered() && getActivity() != null) {
+            RegistrationActivity.startRegistrationActivity(getActivity(), R.string.registration_error_device_deleted);
+            getActivity().finish();
+            return;
+        }
+
+        // Create refresh button
+        snackbar.setAction(R.string.approval_request_action_refresh, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                snackbar.dismiss();
+                // Try to fetch requests again
+                fetchApprovalRequests();
+            }
+        });
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.menu_requests_fragment, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.menu_refresh) {
+            fetchApprovalRequests();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public ApprovalRequestsUpdateInfo getApprovalRequestsUpdateInfo(int position) {
+        List<ApprovalRequestStatus> statusList = Collections.emptyList();
+        boolean hideStatusInfo = true;
+        switch (position) {
+            case SectionsPagerAdapter.PENDING_PAGE_POSITION:
+                statusList = Arrays.asList(ApprovalRequestStatus.pending);
+                hideStatusInfo = false;
+                break;
+            case SectionsPagerAdapter.ARCHIVE_PAGE_POSITION:
+                statusList = Arrays.asList(ApprovalRequestStatus.approved, ApprovalRequestStatus.denied, ApprovalRequestStatus.expired);
+                hideStatusInfo = false;
+                break;
+        }
+        return new ApprovalRequestsUpdateInfo(getApprovalRequests(), statusList, hideStatusInfo);
+    }
+
+    @Override
+    public void startApprovalRequestUpdate() {
+        fetchApprovalRequests();
+    }
+
+    @Override
+    public void onApprovalRequestSelected(ApprovalRequest approvalRequest) {
+        final Intent intent = ApprovalRequestDetailActivity.createIntent(getContext(), approvalRequest);
+        startActivity(intent);
+    }
+
+    @Subscribe
+    public void onRefreshApprovalRequestEvent(RefreshApprovalRequestsEvent refreshApprovalRequestsEvent) {
+        fetchApprovalRequests();
+    }
+
+    private void initViews(View rootView) {
+        setHasOptionsMenu(true);
+        sectionsPagerAdapter = new SectionsPagerAdapter(getChildFragmentManager());
+        // Set up the ViewPager with the sections adapter.
+        viewPager = (ViewPager) rootView.findViewById(R.id.container);
+        viewPager.setAdapter(sectionsPagerAdapter);
+
+        tabLayout = (TabLayout) rootView.findViewById(R.id.tabs);
+        tabLayout.setupWithViewPager(viewPager);
+        tabLayout.setTabTextColors(ContextCompat.getColor(getContext(), android.R.color.white), ContextCompat.getColor(getContext(), R.color.colorAccent));
+
+    }
+
+    private void initVars() {
+        App app = (App) getActivity().getApplicationContext();
+        twilioAuth = (app).getTwilioAuth();
+
+        bus = (app).getBus();
+
+        messageHelper = new MessageHelper();
+    }
+
+    private void fetchApprovalRequests() {
+        final List<ApprovalRequestStatus> statuses = Arrays.asList(ApprovalRequestStatus.approved, ApprovalRequestStatus.denied, ApprovalRequestStatus.expired, ApprovalRequestStatus.pending);
+
+        new AuthyTask<ApprovalRequests>(this) {
+
+            @Override
+            public ApprovalRequests executeOnBackground() {
+                return twilioAuth.getApprovalRequests(statuses, null);
+            }
+        }.execute();
+    }
+
+    public ApprovalRequests getApprovalRequests() {
+        if (approvalRequests == null) {
+            approvalRequests = new ApprovalRequests();
+        }
+        return approvalRequests;
+    }
+
+    /**
+     * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
+     * one of the sections/tabs/pages.
+     */
+    public class SectionsPagerAdapter extends FragmentPagerAdapter implements ViewPager.OnPageChangeListener {
+
+        public static final int PENDING_PAGE_POSITION = 0;
+        public static final int ARCHIVE_PAGE_POSITION = 1;
+        public static final int FRAGMENT_COUNT = 2;
+
+        public SectionsPagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            return ApprovalRequestsListFragment.newInstance(position);
+        }
+
+        @Override
+        public int getCount() {
+            return FRAGMENT_COUNT;
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            switch (position) {
+                case PENDING_PAGE_POSITION:
+                    return getString(R.string.fragment_approval_requests_pending_title);
+                case ARCHIVE_PAGE_POSITION:
+                    return getString(R.string.fragment_approval_requests_archive_title);
+            }
+            return null;
+        }
+
+        @Override
+        public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+        }
+
+        @Override
+        public void onPageSelected(int position) {
+        }
+
+        @Override
+        public void onPageScrollStateChanged(int state) {
+
+        }
+
+        @Override
+        public int getItemPosition(Object object) {
+            return POSITION_NONE;
+        }
+    }
 }
