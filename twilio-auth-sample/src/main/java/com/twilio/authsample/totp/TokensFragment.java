@@ -92,6 +92,7 @@ public class TokensFragment extends Fragment implements TOTPCallback, TokenTimer
         authyTimerView.setArcColor(getResources().getColor(R.color.colorAccent));
         authyTimerView.setArcBackgroundColor(getResources().getColor(R.color.lightGrey));
         authyTimerView.setDotColor(getResources().getColor(android.R.color.transparent));
+        authyTimerView.setTimerBackgroundColor(getResources().getColor(R.color.background_color));
     }
 
 
