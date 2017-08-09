@@ -12,14 +12,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.squareup.otto.Bus;
+import com.squareup.otto.Subscribe;
 import com.twilio.auth.external.ApprovalRequest;
 import com.twilio.auth.external.ApprovalRequestStatus;
 import com.twilio.authsample.App;
 import com.twilio.authsample.R;
 import com.twilio.authsample.approvalrequests.adapters.ApprovalRequestsAdapter;
 import com.twilio.authsample.approvalrequests.events.ApprovalRequestsUpdatedEvent;
-import com.squareup.otto.Bus;
-import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,15 +59,21 @@ public class ApprovalRequestsListFragment extends Fragment {
     public void onAttach(Context context) {
         super.onAttach(context);
 
-        if (context instanceof ApprovalRequestsSource) {
-            approvalRequestsSource = (ApprovalRequestsSource) context;
+        // Detect if we are a inside fragment or activity
+        Object parent = getParentFragment();
+        if (parent == null) {
+            parent = context;
+        }
+
+        if (parent instanceof ApprovalRequestsSource) {
+            approvalRequestsSource = (ApprovalRequestsSource) parent;
         } else {
             throw new ClassCastException(context.toString()
                     + " must implement ApprovalRequestsSource");
         }
 
-        if (context instanceof ApprovalRequestsAdapter.ApprovalRequestSelectedListener) {
-            approvalRequestSelectedListener = (ApprovalRequestsAdapter.ApprovalRequestSelectedListener) context;
+        if (parent instanceof ApprovalRequestsAdapter.ApprovalRequestSelectedListener) {
+            approvalRequestSelectedListener = (ApprovalRequestsAdapter.ApprovalRequestSelectedListener) parent;
         } else {
             throw new ClassCastException(context.toString()
                     + " must implement ApprovalRequestSelectedListener");
@@ -77,6 +83,7 @@ public class ApprovalRequestsListFragment extends Fragment {
     @Override
     public void onDetach() {
         approvalRequestsSource = null;
+        approvalRequestSelectedListener = null;
         super.onDetach();
     }
 

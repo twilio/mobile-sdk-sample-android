@@ -50,9 +50,9 @@ public class RegistrationActivityTestRegistered {
 
     @Test
     public void testApprovalRequestListActivityTransition() throws Exception {
-        // Check that the ApprovalRequestsListActivity is launched
-        CharSequence approvalRequestListActivityTitle = getTargetContext().getString(R.string.title_activity_approval_requests_list);
-        onView(withId(R.id.toolbar)).check(matches(new ToolbarTitleMatcher(is(approvalRequestListActivityTitle))));
+        // Check that the MainActivity is launched
+        CharSequence mainActivityTitle = getTargetContext().getString(R.string.menu_navigation_requests);
+        onView(withId(R.id.toolbar)).check(matches(new ToolbarTitleMatcher(is(mainActivityTitle))));
 
     }
 }

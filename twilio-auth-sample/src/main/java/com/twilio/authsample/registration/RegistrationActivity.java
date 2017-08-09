@@ -17,16 +17,16 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.twilio.auth.TwilioAuth;
 import com.twilio.authsample.App;
 import com.twilio.authsample.R;
-import com.twilio.authsample.approvalrequests.ApprovalRequestsListActivity;
+import com.twilio.authsample.main.MainActivity;
 import com.twilio.authsample.network.SampleApi;
 import com.twilio.authsample.network.model.RegistrationTokenResponse;
 import com.twilio.authsample.utils.AuthyActivityListener;
 import com.twilio.authsample.utils.AuthyTask;
 import com.twilio.authsample.utils.MessageHelper;
-import com.google.firebase.iid.FirebaseInstanceId;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -59,7 +59,7 @@ public class RegistrationActivity extends AppCompatActivity {
         @Override
         public void onSuccess(Void aVoid) {
             updateProgressDialog(false);
-            startApprovalRequestActivity();
+            startMainActivity();
         }
 
         @Override
@@ -70,6 +70,13 @@ public class RegistrationActivity extends AppCompatActivity {
         }
     };
 
+    public static void startRegistrationActivity(Activity activity, @StringRes int errorMessageId) {
+        Intent registrationIntent = new Intent(activity, RegistrationActivity.class);
+        registrationIntent.putExtra(EXTRA_ERROR_MESSAGE_ID, errorMessageId);
+        registrationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        activity.startActivity(registrationIntent);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,7 +85,7 @@ public class RegistrationActivity extends AppCompatActivity {
         initData();
 
         if (twilioAuth.isDeviceRegistered()) {
-            startApprovalRequestActivity();
+            startMainActivity();
         } else {
             startRegistrationProcess();
         }
@@ -99,9 +106,9 @@ public class RegistrationActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
-    public void startApprovalRequestActivity() {
-        Intent approvalRequestsIntent = new Intent(RegistrationActivity.this, ApprovalRequestsListActivity.class);
-        startActivity(approvalRequestsIntent);
+    public void startMainActivity() {
+        Intent intent = new Intent(RegistrationActivity.this, MainActivity.class);
+        startActivity(intent);
         finish();
     }
 
@@ -253,13 +260,6 @@ public class RegistrationActivity extends AppCompatActivity {
                 return null;
             }
         }.execute();
-    }
-
-    public static void startRegistrationActivity(Activity activity, @StringRes int errorMessageId) {
-        Intent registrationIntent = new Intent(activity, RegistrationActivity.class);
-        registrationIntent.putExtra(EXTRA_ERROR_MESSAGE_ID, errorMessageId);
-        registrationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-        activity.startActivity(registrationIntent);
     }
 }
 

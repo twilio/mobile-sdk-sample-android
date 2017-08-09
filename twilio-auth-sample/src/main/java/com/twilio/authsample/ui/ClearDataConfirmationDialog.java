@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
+
 import com.twilio.authsample.R;
 
 public class ClearDataConfirmationDialog extends DialogFragment {
