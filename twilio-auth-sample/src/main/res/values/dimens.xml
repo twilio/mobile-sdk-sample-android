@@ -9,9 +9,6 @@
     <dimen name="large_padding">16dp</dimen>
     <dimen name="primary_action_text_size">16sp</dimen>
 
-    <!-- Main Activity -->
-    <dimen name="nav_header_height">176dp</dimen>
-
     <!-- Approval request list screen -->
     <dimen name="approval_request_item_height">88dp</dimen>
     <dimen name="transaction_logo_width">26dp</dimen>
