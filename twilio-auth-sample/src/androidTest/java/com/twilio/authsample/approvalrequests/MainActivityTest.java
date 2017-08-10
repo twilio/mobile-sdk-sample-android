@@ -9,6 +9,7 @@ import com.twilio.auth.external.ApprovalRequest;
 import com.twilio.auth.external.ApprovalRequestStatus;
 import com.twilio.auth.external.ApprovalRequests;
 import com.twilio.authsample.R;
+import com.twilio.authsample.main.MainActivity;
 import com.twilio.authsample.matchers.RecyclerViewItemCountAssertion;
 import com.twilio.authsample.matchers.RecyclerViewItemMatcher;
 import com.twilio.authsample.matchers.ToolbarTitleMatcher;
@@ -41,7 +42,7 @@ import static org.hamcrest.Matchers.is;
  * Created by jsuarez on 6/1/16.
  */
 @RunWith(AndroidJUnit4.class)
-public class ApprovalRequestsListActivityTest {
+public class MainActivityTest {
 
     public static final String APPROVAL_REQUEST_PENDING_MESSAGE = "Approval Request Pending";
     public static final String APPROVAL_REQUEST_EXPIRED_MESSAGE = "Approval Request Expired";
@@ -49,8 +50,8 @@ public class ApprovalRequestsListActivityTest {
     public static final String APPROVAL_REQUEST_DENIED_MESSAGE = "Approval Request Denied";
 
     @Rule
-    public ActivityTestRule<ApprovalRequestsListActivity> approvalRequestsListActivityActivityTestRule =
-            new ActivityTestRule<>(ApprovalRequestsListActivity.class, false, false);
+    public ActivityTestRule<MainActivity> mainActivityTestRule =
+            new ActivityTestRule<>(MainActivity.class, false, false);
 
     private MockTwilioAuth mockAuthySdk;
 
@@ -88,14 +89,14 @@ public class ApprovalRequestsListActivityTest {
         builder.setCreationDate(new Date());
         approvalRequests.getDenied().add(builder.createMockApprovalRequest());
         mockAuthySdk.setApprovalRequests(approvalRequests);
-        Intent approvalRequestsListIntent = ApprovalRequestsListActivity.createIntent(getTargetContext());
-        approvalRequestsListActivityActivityTestRule.launchActivity(approvalRequestsListIntent);
+        Intent mainActivityIntent = new Intent(getTargetContext(), MainActivity.class);
+        mainActivityTestRule.launchActivity(mainActivityIntent);
     }
 
     @Test
-    public void testPendingTab() throws Exception {
+    public void testRequestsView() throws Exception {
         // Check that the correct title is used
-        CharSequence approvalRequestListActivityTitle = getTargetContext().getString(R.string.title_activity_approval_requests_list);
+        CharSequence approvalRequestListActivityTitle = getTargetContext().getString(R.string.menu_navigation_requests);
         onView(withId(R.id.toolbar)).check(matches(new ToolbarTitleMatcher(is(approvalRequestListActivityTitle))));
 
         // Check initial state with two tabs
