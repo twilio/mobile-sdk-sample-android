@@ -57,7 +57,7 @@ public class ApprovalRequestDetailActivity extends AppCompatActivity {
         @Override
         public void onSuccess(Void result) {
             enableButtons(false);
-            messageHelper.show(buttonBar, R.string.approve_success).setCallback(messageDismissedCallback);
+            messageHelper.show(buttonBar, R.string.approve_success).addCallback(messageDismissedCallback);
         }
 
         @Override
@@ -70,7 +70,7 @@ public class ApprovalRequestDetailActivity extends AppCompatActivity {
         @Override
         public void onSuccess(Void result) {
             enableButtons(false);
-            messageHelper.show(buttonBar, R.string.deny_success).setCallback(messageDismissedCallback);
+            messageHelper.show(buttonBar, R.string.deny_success).addCallback(messageDismissedCallback);
         }
 
         @Override
@@ -129,6 +129,7 @@ public class ApprovalRequestDetailActivity extends AppCompatActivity {
 
     @Override
     protected void onStop() {
+        messageHelper.getSnackbar().removeCallback(messageDismissedCallback);
         messageHelper.dismiss();
         super.onStop();
     }

@@ -8,23 +8,23 @@ import com.twilio.authsample.App;
  */
 public class TestApp extends App {
 
-    private MockTwilioAuth mockAuthy;
+    private MockTwilioAuth mockTwilioAuth;
     public static TestApp TEST_APP;
 
     @Override
     public void onCreate() {
         super.onCreate();
         TEST_APP = this;
-        mockAuthy = new MockTwilioAuth(this, false);
+        mockTwilioAuth = new MockTwilioAuth(this, false);
     }
 
     @Override
     public TwilioAuth getTwilioAuth() {
-        return mockAuthy;
+        return mockTwilioAuth;
     }
 
-    public void setMockAuthy(MockTwilioAuth mockAuthy) {
-        this.mockAuthy = mockAuthy;
+    public void setMockTwilioAuth(MockTwilioAuth mockTwilioAuth) {
+        this.mockTwilioAuth = mockTwilioAuth;
     }
 
 }
