@@ -8,7 +8,7 @@ import android.support.test.runner.AndroidJUnit4;
 
 import com.twilio.auth.external.ApprovalRequestStatus;
 import com.twilio.authsample.R;
-import com.twilio.authsample.approvalrequests.ApprovalRequestsListActivityTest;
+import com.twilio.authsample.approvalrequests.MainActivityTest;
 import com.twilio.authsample.matchers.RecyclerViewItemCountAssertion;
 import com.twilio.authsample.matchers.RecyclerViewItemMatcher;
 import com.twilio.authsample.matchers.ToolbarTitleMatcher;
@@ -61,7 +61,7 @@ public class ApprovalRequestDetailActivityTest {
         application.setMockAuthy(mockAuthySdk);
 
         builder = new MockApprovalRequest.Builder();
-        builder.setMessage(ApprovalRequestsListActivityTest.APPROVAL_REQUEST_PENDING_MESSAGE);
+        builder.setMessage(MainActivityTest.APPROVAL_REQUEST_PENDING_MESSAGE);
         builder.setTransactionId("uuid1");
         builder.setStatus(ApprovalRequestStatus.pending);
         builder.setCreationDate(new Date());
@@ -80,7 +80,7 @@ public class ApprovalRequestDetailActivityTest {
         onView(withId(R.id.action_bar)).check(matches(new ToolbarTitleMatcher(is(approvalRequestDetailActivityTitle))));
 
         // Check transaction message
-        onView(withId(R.id.transactionMessage)).check(matches(withText(ApprovalRequestsListActivityTest.APPROVAL_REQUEST_PENDING_MESSAGE)));
+        onView(withId(R.id.transactionMessage)).check(matches(withText(MainActivityTest.APPROVAL_REQUEST_PENDING_MESSAGE)));
 
         // Check details are displayed
         onView(withId(R.id.approvalRequestAttributes)).check(new RecyclerViewItemCountAssertion(1));

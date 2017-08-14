@@ -8,7 +8,8 @@ import android.view.View;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 
-import static android.support.test.espresso.core.deps.guava.base.Preconditions.checkNotNull;
+import static android.support.test.espresso.intent.Checks.checkNotNull;
+
 
 /**
  * Created by jsuarez on 6/1/16.
