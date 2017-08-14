@@ -95,15 +95,15 @@ public class MockTwilioAuth extends TwilioAuth {
         this.errorOnUpdate = errorOnUpdate;
     }
 
-    public void setApprovalRequests(ApprovalRequests approvalRequests) {
-        this.approvalRequests = approvalRequests;
-    }
-
     public ApprovalRequests getApprovalRequests() {
         if (approvalRequests == null) {
             approvalRequests = new ApprovalRequests();
         }
 
         return approvalRequests;
+    }
+
+    public void setApprovalRequests(ApprovalRequests approvalRequests) {
+        this.approvalRequests = approvalRequests;
     }
 }

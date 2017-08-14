@@ -52,7 +52,7 @@ public class ApprovalRequestInfoAdapter extends RecyclerView.Adapter<ApprovalReq
         return info;
     }
 
-    private Map.Entry<String, String> getItemForPosition(int position) {
+    public Map.Entry<String, String> getItemForPosition(int position) {
         final Set<Map.Entry<String, String>> entries = getInfo().entrySet();
         int i = 0;
         for (Map.Entry<String, String> entry : entries) {

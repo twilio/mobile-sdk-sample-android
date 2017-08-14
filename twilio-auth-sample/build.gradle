@@ -21,6 +21,24 @@ android {
             proguardFiles fileTree(dir: 'proguard', include: ['*.pro']).asList().toArray()
         }
     }
+
+    testOptions {
+        unitTests {
+            all {
+                jvmArgs '-noverify'
+            }
+        }
+    }
+
+    sourceSets {
+        String sharedTestDir = 'src/sharedTest/java'
+        test {
+            java.srcDir sharedTestDir
+        }
+        androidTest {
+            java.srcDir sharedTestDir
+        }
+    }
 }
 
 dependencies {
@@ -56,7 +74,8 @@ dependencies {
         exclude module: 'support-compat'
         exclude module: 'transition'
     }
-}
 
+    testCompile "org.robolectric:robolectric:3.4.2"
+}
 
 apply plugin: 'com.google.gms.google-services'

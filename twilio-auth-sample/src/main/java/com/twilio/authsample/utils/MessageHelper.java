@@ -58,4 +58,10 @@ public class MessageHelper {
             snackbar = null;
         }
     }
+
+    public void removeCallback(Snackbar.Callback callback) {
+        if (snackbar != null) {
+            snackbar.removeCallback(callback);
+        }
+    }
 }
