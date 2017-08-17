@@ -1,1 +1,2 @@
-include ':twilio-auth-sample'
+include ':twilio-auth-sample', ':auth'
+project(':auth').projectDir = new File('../twilio-auth/auth')
