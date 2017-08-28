@@ -1,21 +1,22 @@
 package com.twilio.authsample.mocks;
 
+import android.provider.Settings;
+
 import com.twilio.auth.TwilioAuth;
 import com.twilio.authsample.App;
 
 /**
- * Created by jsuarez on 5/31/16.
+ * Created by jsuarez on 8/14/17.
  */
+
 public class TestApp extends App {
 
-    public static TestApp TEST_APP;
-    private MockTwilioAuth mockTwilioAuth;
+    MockTwilioAuth mockTwilioAuth;
 
     @Override
     public void onCreate() {
+        Settings.Secure.putString(getContentResolver(), Settings.Secure.ANDROID_ID, "test_android_id");
         super.onCreate();
-        TEST_APP = this;
-        mockTwilioAuth = new MockTwilioAuth(this, false);
     }
 
     @Override
@@ -23,8 +24,7 @@ public class TestApp extends App {
         return mockTwilioAuth;
     }
 
-    public void setMockTwilioAuth(MockTwilioAuth mockTwilioAuth) {
+    public void setTwilioAuth(MockTwilioAuth mockTwilioAuth) {
         this.mockTwilioAuth = mockTwilioAuth;
     }
-
 }

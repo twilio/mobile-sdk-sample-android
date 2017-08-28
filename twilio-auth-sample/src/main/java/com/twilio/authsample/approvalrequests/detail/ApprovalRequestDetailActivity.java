@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
 import com.twilio.auth.TwilioAuth;
 import com.twilio.auth.external.ApprovalRequest;
 import com.twilio.auth.external.ApprovalRequestLogo;
@@ -29,7 +30,6 @@ import com.twilio.authsample.utils.AuthyTask;
 import com.twilio.authsample.utils.ImageUtils;
 import com.twilio.authsample.utils.MessageHelper;
 import com.twilio.authsample.utils.TimeFormattingUtils;
-import com.squareup.picasso.Picasso;
 
 import java.util.Calendar;
 import java.util.List;
@@ -37,7 +37,7 @@ import java.util.List;
 public class ApprovalRequestDetailActivity extends AppCompatActivity {
 
     public static final String PARAM_APPROVAL_REQUEST = "approval_request";
-
+    protected MessageHelper messageHelper;
     private RecyclerView approvalRequestAttributes;
     private ImageView transactionImage;
     private TextView transactionMessage;
@@ -46,18 +46,22 @@ public class ApprovalRequestDetailActivity extends AppCompatActivity {
     private Button denyButton;
     private View buttonBar;
     private View transactionStatusContainer;
-
     private ApprovalRequest approvalRequest;
     private TwilioAuth twilioAuth;
     private Picasso picasso;
-    protected MessageHelper messageHelper;
-
+    private Snackbar.Callback messageDismissedCallback = new Snackbar.Callback() {
+        @Override
+        public void onDismissed(Snackbar snackbar, int event) {
+            super.onDismissed(snackbar, event);
+            finish();
+        }
+    };
     // Listeners
     private AuthyActivityListener<Void> approvalRequestApprovedListener = new AuthyActivityListener<Void>() {
         @Override
         public void onSuccess(Void result) {
             enableButtons(false);
-            messageHelper.show(buttonBar, R.string.approve_success).setCallback(messageDismissedCallback);
+            messageHelper.show(buttonBar, R.string.approve_success).addCallback(messageDismissedCallback);
         }
 
         @Override
@@ -65,25 +69,16 @@ public class ApprovalRequestDetailActivity extends AppCompatActivity {
             handleUpdateApprovalRequestError(exception, true);
         }
     };
-
     private AuthyActivityListener<Void> approvalRequestDeniedListener = new AuthyActivityListener<Void>() {
         @Override
         public void onSuccess(Void result) {
             enableButtons(false);
-            messageHelper.show(buttonBar, R.string.deny_success).setCallback(messageDismissedCallback);
+            messageHelper.show(buttonBar, R.string.deny_success).addCallback(messageDismissedCallback);
         }
 
         @Override
         public void onError(Exception exception) {
             handleUpdateApprovalRequestError(exception, false);
-        }
-    };
-
-    private Snackbar.Callback messageDismissedCallback = new Snackbar.Callback() {
-        @Override
-        public void onDismissed(Snackbar snackbar, int event) {
-            super.onDismissed(snackbar, event);
-            finish();
         }
     };
 
@@ -129,6 +124,7 @@ public class ApprovalRequestDetailActivity extends AppCompatActivity {
 
     @Override
     protected void onStop() {
+        messageHelper.removeCallback(messageDismissedCallback);
         messageHelper.dismiss();
         super.onStop();
     }

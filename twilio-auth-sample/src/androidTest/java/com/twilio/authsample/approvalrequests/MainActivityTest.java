@@ -1,6 +1,7 @@
 package com.twilio.authsample.approvalrequests;
 
 import android.content.Intent;
+import android.support.test.espresso.contrib.NavigationViewActions;
 import android.support.test.espresso.contrib.RecyclerViewActions;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
@@ -30,6 +31,7 @@ import static android.support.test.InstrumentationRegistry.getTargetContext;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
+import static android.support.test.espresso.contrib.DrawerActions.open;
 import static android.support.test.espresso.contrib.RecyclerViewActions.scrollToPosition;
 import static android.support.test.espresso.matcher.ViewMatchers.hasDescendant;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
@@ -53,13 +55,13 @@ public class MainActivityTest {
     public ActivityTestRule<MainActivity> mainActivityTestRule =
             new ActivityTestRule<>(MainActivity.class, false, false);
 
-    private MockTwilioAuth mockAuthySdk;
+    private MockTwilioAuth mockTwilioAuth;
 
     @Before
     public void setUp() throws Exception {
         TestApp application = TestApp.TEST_APP;
-        mockAuthySdk = new MockTwilioAuth(application, true);
-        application.setMockAuthy(mockAuthySdk);
+        mockTwilioAuth = new MockTwilioAuth(application, true);
+        application.setMockTwilioAuth(mockTwilioAuth);
 
         ApprovalRequests approvalRequests = getMockApprovalRequests();
         MockApprovalRequest.Builder builder = new MockApprovalRequest.Builder();
@@ -88,16 +90,16 @@ public class MainActivityTest {
         builder.setStatus(ApprovalRequestStatus.denied);
         builder.setCreationDate(new Date());
         approvalRequests.getDenied().add(builder.createMockApprovalRequest());
-        mockAuthySdk.setApprovalRequests(approvalRequests);
+        mockTwilioAuth.setApprovalRequests(approvalRequests);
         Intent mainActivityIntent = new Intent(getTargetContext(), MainActivity.class);
         mainActivityTestRule.launchActivity(mainActivityIntent);
     }
 
     @Test
-    public void testRequestsView() throws Exception {
+    public void testRequestsViewPendingTab() throws Exception {
         // Check that the correct title is used
-        CharSequence approvalRequestListActivityTitle = getTargetContext().getString(R.string.menu_navigation_requests);
-        onView(withId(R.id.toolbar)).check(matches(new ToolbarTitleMatcher(is(approvalRequestListActivityTitle))));
+        CharSequence activityTitle = getTargetContext().getString(R.string.menu_navigation_requests);
+        onView(withId(R.id.toolbar)).check(matches(new ToolbarTitleMatcher(is(activityTitle))));
 
         // Check initial state with two tabs
         onView(withText(R.string.fragment_approval_requests_pending_title)).check(matches(isDisplayed()));
@@ -113,7 +115,7 @@ public class MainActivityTest {
     }
 
     @Test
-    public void testArchiveTab() throws Exception {
+    public void testRequestsViewArchiveTab() throws Exception {
 
         // Check initial state with two tabs
         onView(withText(R.string.fragment_approval_requests_pending_title)).check(matches(isDisplayed()));
@@ -131,7 +133,7 @@ public class MainActivityTest {
     }
 
     @Test
-    public void testSelectApprovalRequest() throws Exception {
+    public void testRequestsViewSelectApprovalRequest() throws Exception {
         // Check initial state with two tabs
         onView(withText(R.string.fragment_approval_requests_pending_title)).check(matches(isDisplayed()));
         onView(withText(R.string.fragment_approval_requests_archive_title)).check(matches(isDisplayed()));
@@ -146,6 +148,21 @@ public class MainActivityTest {
         // Check that we are now on the detail activity
         CharSequence approvalRequestDetailActivityTitle = getTargetContext().getString(R.string.title_activity_approval_request_detail);
         onView(withId(R.id.action_bar)).check(matches(new ToolbarTitleMatcher(is(approvalRequestDetailActivityTitle))));
+    }
+
+    @Test
+    public void testTokensView() throws Exception {
+        // Open navigation menu
+        mockTwilioAuth.setTotp("123456");
+        onView(withId(R.id.drawer_layout)).perform(open());
+        onView(withId(R.id.nav_view)).perform(NavigationViewActions.navigateTo(R.id.nav_tokens));
+
+        // Check that the correct title is used
+        CharSequence activityTitle = getTargetContext().getString(R.string.menu_navigation_tokens);
+        onView(withId(R.id.toolbar)).check(matches(new ToolbarTitleMatcher(is(activityTitle))));
+
+        // Check that a totp is displayed
+        onView(withId(R.id.totp)).check(matches(isDisplayed()));
     }
 
     private ApprovalRequests getMockApprovalRequests() {

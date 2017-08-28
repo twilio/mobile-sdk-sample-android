@@ -3,8 +3,8 @@ package com.twilio.authsample.mocks;
 import android.os.Build;
 
 import com.twilio.auth.external.ApprovalRequest;
-import com.twilio.auth.external.ApprovalRequestStatus;
 import com.twilio.auth.external.ApprovalRequestLogo;
+import com.twilio.auth.external.ApprovalRequestStatus;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -17,12 +17,12 @@ import java.util.Map;
  */
 public class MockApprovalRequest implements ApprovalRequest {
     private final long expirationTimeStamp;
+    private final Map<String, String> details;
     private Date signingTime;
     private Date creationDate;
     private String transactionId;
     private ApprovalRequestStatus status;
     private String message;
-    private final Map<String, String> details;
 
     public MockApprovalRequest(String transactionId, ApprovalRequestStatus status, String message, Map<String, String> details, Date creationDate, long expirationTimeStamp) {
         this.transactionId = transactionId;
@@ -122,13 +122,13 @@ public class MockApprovalRequest implements ApprovalRequest {
     }
 
     @Override
-    public long getExpirationTimestamp() {
-        return expirationTimeStamp;
+    public void setReason(String reason) {
+
     }
 
     @Override
-    public void setReason(String reason) {
-
+    public long getExpirationTimestamp() {
+        return expirationTimeStamp;
     }
 
     @Override
