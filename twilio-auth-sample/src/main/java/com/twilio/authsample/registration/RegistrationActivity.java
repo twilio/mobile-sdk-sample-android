@@ -248,15 +248,15 @@ public class RegistrationActivity extends AppCompatActivity {
         }
         RegistrationTokenResponse registrationTokenResponse = response.body();
 
-        registerDevice(registrationTokenResponse.getRegistrationToken());
+        registerDevice(registrationTokenResponse.getRegistrationToken(), registrationTokenResponse.getApiKey());
     }
 
-    private void registerDevice(final String registrationToken) {
+    private void registerDevice(final String registrationToken, final String integrationApiKey) {
         updateProgressDialog(true);
         new AuthyTask<Void>(registerDeviceListener) {
             @Override
             public Void executeOnBackground() {
-                twilioAuth.registerDevice(registrationToken, FirebaseInstanceId.getInstance().getToken());
+                twilioAuth.registerDevice(registrationToken, FirebaseInstanceId.getInstance().getToken(), integrationApiKey);
                 return null;
             }
         }.execute();

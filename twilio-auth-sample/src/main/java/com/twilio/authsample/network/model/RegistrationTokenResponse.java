@@ -9,6 +9,8 @@ import com.google.gson.annotations.SerializedName;
 public class RegistrationTokenResponse {
     @SerializedName("registration_token")
     private String registrationToken;
+    @SerializedName("integration_api_key")
+    private String apiKey;
 
     public String getRegistrationToken() {
         return registrationToken;
@@ -16,5 +18,13 @@ public class RegistrationTokenResponse {
 
     public void setRegistrationToken(String registrationToken) {
         this.registrationToken = registrationToken;
+    }
+
+    public String getApiKey() {
+        return apiKey;
+    }
+
+    public void setApiKey(String apiKey) {
+        this.apiKey = apiKey;
     }
 }
