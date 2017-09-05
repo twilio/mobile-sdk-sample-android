@@ -13,21 +13,20 @@ import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 
 import com.authy.commonandroid.external.TwilioException;
+import com.google.firebase.messaging.FirebaseMessagingService;
+import com.google.firebase.messaging.RemoteMessage;
 import com.twilio.auth.TwilioAuth;
 import com.twilio.auth.external.ApprovalRequest;
-import com.twilio.auth.external.ApprovalRequests;
 import com.twilio.authsample.App;
 import com.twilio.authsample.R;
 import com.twilio.authsample.approvalrequests.detail.ApprovalRequestDetailActivity;
 import com.twilio.authsample.approvalrequests.events.RefreshApprovalRequestsEvent;
-import com.google.firebase.messaging.FirebaseMessagingService;
-import com.google.firebase.messaging.RemoteMessage;
 
 import java.util.Map;
 
 public class MessagingService extends FirebaseMessagingService {
-    private static final String TAG = MessagingService.class.getSimpleName();
     public static final String ONETOUCH_APPROVAL_REQUEST_TYPE = "onetouch_approval_request";
+    private static final String TAG = MessagingService.class.getSimpleName();
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
@@ -107,11 +106,7 @@ public class MessagingService extends FirebaseMessagingService {
 
     private ApprovalRequest getApprovalRequestFromId(TwilioAuth twilioAuth, String approvalRequestUuid) {
         try {
-            ApprovalRequests approvalRequests = twilioAuth.getApprovalRequests(
-                    null,
-                    null);
-
-            return approvalRequests.getApprovalRequestById(approvalRequestUuid);
+            return twilioAuth.getRequest(approvalRequestUuid);
         } catch (TwilioException e) {
             return null;
         }
