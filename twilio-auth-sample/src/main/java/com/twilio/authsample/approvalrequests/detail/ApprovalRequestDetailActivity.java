@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
+import android.support.v4.widget.ContentLoadingProgressBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -36,16 +37,19 @@ import java.util.List;
 
 public class ApprovalRequestDetailActivity extends AppCompatActivity {
 
-    public static final String PARAM_APPROVAL_REQUEST = "approval_request";
+    public static final String PARAM_APPROVAL_REQUEST_UUID = "approval_request_uuid";
     protected MessageHelper messageHelper;
+    private View content;
+    private ContentLoadingProgressBar progressBar;
     private RecyclerView approvalRequestAttributes;
-    private ImageView transactionImage;
-    private TextView transactionMessage;
+    private ImageView requestImage;
+    private TextView requestMessage;
     private TextView transactionStatusMessage;
     private Button approveButton;
     private Button denyButton;
     private View buttonBar;
     private View transactionStatusContainer;
+    private String approvalRequestUUID;
     private ApprovalRequest approvalRequest;
     private TwilioAuth twilioAuth;
     private Picasso picasso;
@@ -81,6 +85,19 @@ public class ApprovalRequestDetailActivity extends AppCompatActivity {
             handleUpdateApprovalRequestError(exception, false);
         }
     };
+    private AuthyActivityListener<ApprovalRequest> approvalRequestListener = new AuthyActivityListener<ApprovalRequest>() {
+        @Override
+        public void onSuccess(ApprovalRequest result) {
+            approvalRequest = result;
+            bindViews(result);
+            updateProgressBar(false);
+        }
+
+        @Override
+        public void onError(Exception exception) {
+            updateProgressBar(false);
+        }
+    };
 
     /**
      * Creates an intent to launch the ApprovalRequestDetailActivity
@@ -89,7 +106,7 @@ public class ApprovalRequestDetailActivity extends AppCompatActivity {
      */
     public static Intent createIntent(Context context, ApprovalRequest approvalRequest) {
         final Intent intent = new Intent(context, ApprovalRequestDetailActivity.class);
-        intent.putExtra(PARAM_APPROVAL_REQUEST, approvalRequest);
+        intent.putExtra(PARAM_APPROVAL_REQUEST_UUID, approvalRequest.getUuid());
         return intent;
     }
 
@@ -102,13 +119,12 @@ public class ApprovalRequestDetailActivity extends AppCompatActivity {
         twilioAuth = ((App) getApplicationContext()).getTwilioAuth();
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        approvalRequest = (ApprovalRequest) getIntent().getSerializableExtra(PARAM_APPROVAL_REQUEST);
+        approvalRequestUUID = getIntent().getStringExtra(PARAM_APPROVAL_REQUEST_UUID);
         picasso = Picasso.with(this);
 
         messageHelper = new MessageHelper();
         initViews();
-
-        bindViews();
+        initData();
     }
 
     @Override
@@ -130,8 +146,10 @@ public class ApprovalRequestDetailActivity extends AppCompatActivity {
     }
 
     private void initViews() {
-        transactionImage = (ImageView) findViewById(R.id.transactionImage);
-        transactionMessage = (TextView) findViewById(R.id.transactionMessage);
+        content = findViewById(R.id.content);
+        progressBar = (ContentLoadingProgressBar) findViewById(R.id.progressBar);
+        requestImage = (ImageView) findViewById(R.id.requestImage);
+        requestMessage = (TextView) findViewById(R.id.requestMessage);
         transactionStatusMessage = (TextView) findViewById(R.id.transactionStatusMessage);
         buttonBar = findViewById(R.id.buttonBar);
         approveButton = (Button) findViewById(R.id.approveButton);
@@ -142,13 +160,24 @@ public class ApprovalRequestDetailActivity extends AppCompatActivity {
     }
 
 
-    private void bindViews() {
+    private void initData() {
+        // Show progress bar
+        updateProgressBar(true);
+        new AuthyTask<ApprovalRequest>(approvalRequestListener) {
+            @Override
+            public ApprovalRequest executeOnBackground() {
+                return twilioAuth.getRequest(approvalRequestUUID);
+            }
+        }.execute();
+    }
+
+    private void bindViews(ApprovalRequest approvalRequest) {
         // Check status
         checkStatus(approvalRequest);
 
         // Message
         CharSequence message = TextUtils.isEmpty(approvalRequest.getMessage()) ? "" : Html.fromHtml(approvalRequest.getMessage());
-        transactionMessage.setText(message);
+        requestMessage.setText(message);
 
         // Images
         final List<? extends ApprovalRequestLogo> images = approvalRequest.getLogos();
@@ -158,16 +187,21 @@ public class ApprovalRequestDetailActivity extends AppCompatActivity {
                     .noFade()
                     .placeholder(R.drawable.default_logo)
                     .error(R.drawable.default_logo)
-                    .into(transactionImage);
+                    .into(requestImage);
         } else {
-            transactionImage.setImageResource(R.drawable.default_logo);
+            requestImage.setImageResource(R.drawable.default_logo);
         }
 
         // Details
         approvalRequestAttributes.setAdapter(new ApprovalRequestInfoAdapter(this, approvalRequest.getDetails()));
 
         // Buttons
-        bindButtons();
+        bindButtons(approvalRequest);
+    }
+
+    private void updateProgressBar(boolean show) {
+        progressBar.setVisibility(show ? View.VISIBLE : View.GONE);
+        content.setVisibility(show ? View.GONE : View.VISIBLE);
     }
 
     private void checkStatus(ApprovalRequest approvalRequest) {
@@ -181,19 +215,19 @@ public class ApprovalRequestDetailActivity extends AppCompatActivity {
         }
     }
 
-    private void bindButtons() {
+    private void bindButtons(final ApprovalRequest approvalRequest) {
 
         approveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                approve();
+                approve(approvalRequest);
             }
         });
 
         denyButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                deny();
+                deny(approvalRequest);
             }
         });
 
@@ -225,7 +259,7 @@ public class ApprovalRequestDetailActivity extends AppCompatActivity {
         denyButton.setEnabled(enable);
     }
 
-    private void deny() {
+    private void deny(final ApprovalRequest approvalRequest) {
         new AuthyTask<Void>(approvalRequestDeniedListener) {
 
             @Override
@@ -236,7 +270,7 @@ public class ApprovalRequestDetailActivity extends AppCompatActivity {
         }.execute();
     }
 
-    private void approve() {
+    private void approve(final ApprovalRequest approvalRequest) {
         new AuthyTask<Void>(approvalRequestApprovedListener) {
 
             @Override
@@ -263,7 +297,7 @@ public class ApprovalRequestDetailActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // Refresh UI
-                bindViews();
+                bindViews(approvalRequest);
             }
         });
     }
