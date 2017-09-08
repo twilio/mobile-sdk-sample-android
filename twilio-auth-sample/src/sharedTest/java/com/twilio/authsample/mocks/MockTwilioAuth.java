@@ -42,7 +42,7 @@ public class MockTwilioAuth extends TwilioAuth {
     }
 
     @Override
-    public void registerDevice(@NonNull String registrationToken, @Nullable String pushToken) {
+    public void registerDevice(@NonNull String registrationToken, @Nullable String pushToken, @Nullable String integrationApiKey) {
         return;
     }
 
