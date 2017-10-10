@@ -1,6 +1,6 @@
 package com.twilio.authsample.utils;
 
-import com.twilio.auth.external.ApprovalRequestLogo;
+import com.twilio.authenticator.external.ApprovalRequestLogo;
 
 import java.util.List;
 

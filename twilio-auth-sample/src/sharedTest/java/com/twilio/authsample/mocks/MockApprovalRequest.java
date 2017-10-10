@@ -2,9 +2,9 @@ package com.twilio.authsample.mocks;
 
 import android.os.Build;
 
-import com.twilio.auth.external.ApprovalRequest;
-import com.twilio.auth.external.ApprovalRequestLogo;
-import com.twilio.auth.external.ApprovalRequestStatus;
+import com.twilio.authenticator.external.ApprovalRequest;
+import com.twilio.authenticator.external.ApprovalRequestLogo;
+import com.twilio.authenticator.external.ApprovalRequestStatus;
 
 import java.util.ArrayList;
 import java.util.Date;

@@ -1,18 +1,5 @@
 package com.twilio.authsample.registration;
 
-import android.content.Intent;
-import android.support.test.espresso.intent.rule.IntentsTestRule;
-import android.support.test.runner.AndroidJUnit4;
-
-import com.twilio.authsample.R;
-import com.twilio.authsample.mocks.MockTwilioAuth;
-import com.twilio.authsample.mocks.TestApp;
-
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-
 import static android.support.test.InstrumentationRegistry.getTargetContext;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
@@ -22,6 +9,19 @@ import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.hasErrorText;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
+
+import android.content.Intent;
+import android.support.test.espresso.intent.rule.IntentsTestRule;
+import android.support.test.runner.AndroidJUnit4;
+
+import com.twilio.authsample.R;
+import com.twilio.authsample.mocks.MockTwilioAuthenticator;
+import com.twilio.authsample.mocks.TestApp;
+
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
 /**
  * Created by jsuarez on 5/12/16.
@@ -36,7 +36,7 @@ public class RegistrationActivityTestNotRegistered {
     @Before
     public void setUp() throws Exception {
         TestApp application = TestApp.TEST_APP;
-        application.setMockTwilioAuth(new MockTwilioAuth(application, false));
+        application.setMockTwilioAuthenticator(new MockTwilioAuthenticator(application, false));
         registrationActivityTestRule.launchActivity(new Intent(getTargetContext(), RegistrationActivity.class));
     }
 

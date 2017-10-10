@@ -1,5 +1,10 @@
 package com.twilio.authsample.approvalrequests.detail;
 
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertTrue;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
@@ -7,12 +12,12 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.TextView;
 
-import com.twilio.auth.external.ApprovalRequestStatus;
+import com.twilio.authenticator.external.ApprovalRequestStatus;
 import com.twilio.authsample.BuildConfig;
 import com.twilio.authsample.R;
 import com.twilio.authsample.approvalrequests.adapters.ApprovalRequestInfoAdapter;
 import com.twilio.authsample.mocks.MockApprovalRequest;
-import com.twilio.authsample.mocks.MockTwilioAuth;
+import com.twilio.authsample.mocks.MockTwilioAuthenticator;
 import com.twilio.authsample.mocks.TestApp;
 
 import org.junit.Before;
@@ -26,11 +31,6 @@ import org.robolectric.annotation.Config;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertTrue;
 
 /**
  * Created by jsuarez on 8/14/17.
@@ -46,14 +46,14 @@ public class ApprovalRequestDetailActivityTest {
     private MockApprovalRequest.Builder builder;
     private TestApp context;
     private Activity activity;
-    private MockTwilioAuth mockTwilioAuth;
+    private MockTwilioAuthenticator mockTwilioAuthenticator;
 
     @Before
     public void setUp() throws Exception {
         context = (TestApp) RuntimeEnvironment.application;
 
-        mockTwilioAuth = new MockTwilioAuth(context, true);
-        context.setTwilioAuth(mockTwilioAuth);
+        mockTwilioAuthenticator = new MockTwilioAuthenticator(context, true);
+        context.setTwilioAuth(mockTwilioAuthenticator);
 
         builder = new MockApprovalRequest.Builder();
         builder.setMessage(APPROVAL_REQUEST_PENDING_MESSAGE);
@@ -104,7 +104,7 @@ public class ApprovalRequestDetailActivityTest {
         assertEquals("Button must be visible", View.VISIBLE, approveButton.getVisibility());
 
         // Check that the correct error is displayed
-        mockTwilioAuth.setErrorOnUpdate(true);
+        mockTwilioAuthenticator.setErrorOnUpdate(true);
         approveButton.performClick();
 
         // Error message is displayed
@@ -113,7 +113,7 @@ public class ApprovalRequestDetailActivityTest {
         assertEquals("Error message is not valid", activity.getString(R.string.approve_failed), snackbar.getText().toString());
 
         // Check successful approval
-        mockTwilioAuth.setErrorOnUpdate(false);
+        mockTwilioAuthenticator.setErrorOnUpdate(false);
         approveButton.performClick();
         assertEquals("Message is not valid", activity.getString(R.string.approve_success), snackbar.getText().toString());
     }
@@ -125,7 +125,7 @@ public class ApprovalRequestDetailActivityTest {
         assertEquals("Button must be visible", View.VISIBLE, denyButton.getVisibility());
 
         // Check that the correct error is displayed
-        mockTwilioAuth.setErrorOnUpdate(true);
+        mockTwilioAuthenticator.setErrorOnUpdate(true);
         denyButton.performClick();
 
         // Error message is displayed
@@ -134,7 +134,7 @@ public class ApprovalRequestDetailActivityTest {
         assertEquals("Error message is not valid", activity.getString(R.string.deny_failed), snackbar.getText().toString());
 
         // Check successful approval
-        mockTwilioAuth.setErrorOnUpdate(false);
+        mockTwilioAuthenticator.setErrorOnUpdate(false);
         denyButton.performClick();
         assertEquals("Message is not valid", activity.getString(R.string.deny_success), snackbar.getText().toString());
     }

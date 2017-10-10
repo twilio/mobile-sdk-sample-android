@@ -17,10 +17,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
-import com.twilio.auth.TwilioAuth;
-import com.twilio.auth.external.ApprovalRequest;
-import com.twilio.auth.external.ApprovalRequestLogo;
-import com.twilio.auth.external.ApprovalRequestStatus;
+import com.twilio.authenticator.TwilioAuthenticator;
+import com.twilio.authenticator.external.ApprovalRequest;
+import com.twilio.authenticator.external.ApprovalRequestLogo;
+import com.twilio.authenticator.external.ApprovalRequestStatus;
 import com.twilio.authsample.App;
 import com.twilio.authsample.R;
 import com.twilio.authsample.approvalrequests.adapters.ApprovalRequestInfoAdapter;
@@ -47,7 +47,7 @@ public class ApprovalRequestDetailActivity extends AppCompatActivity {
     private View buttonBar;
     private View transactionStatusContainer;
     private ApprovalRequest approvalRequest;
-    private TwilioAuth twilioAuth;
+    private TwilioAuthenticator twilioAuthenticator;
     private Picasso picasso;
     private Snackbar.Callback messageDismissedCallback = new Snackbar.Callback() {
         @Override
@@ -99,7 +99,7 @@ public class ApprovalRequestDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_approval_request_detail);
 
-        twilioAuth = ((App) getApplicationContext()).getTwilioAuth();
+        twilioAuthenticator = ((App) getApplicationContext()).getTwilioAuthenticator();
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         approvalRequest = (ApprovalRequest) getIntent().getSerializableExtra(PARAM_APPROVAL_REQUEST);
@@ -230,7 +230,7 @@ public class ApprovalRequestDetailActivity extends AppCompatActivity {
 
             @Override
             public Void executeOnBackground() {
-                twilioAuth.denyRequest(approvalRequest);
+                twilioAuthenticator.denyRequest(approvalRequest);
                 return null;
             }
         }.execute();
@@ -241,7 +241,7 @@ public class ApprovalRequestDetailActivity extends AppCompatActivity {
 
             @Override
             public Void executeOnBackground() {
-                twilioAuth.approveRequest(approvalRequest);
+                twilioAuthenticator.approveRequest(approvalRequest);
                 return null;
             }
         }.execute();
@@ -252,7 +252,7 @@ public class ApprovalRequestDetailActivity extends AppCompatActivity {
         Snackbar snackbar = messageHelper.show(buttonBar, approveError ? R.string.approve_failed : R.string.deny_failed);
         Log.e(ApprovalRequestDetailActivity.class.getSimpleName(), approveError ? "Exception while approving request" : "Exception while denying request", exception);
 
-        if (!twilioAuth.isDeviceRegistered()) {
+        if (!twilioAuthenticator.isDeviceRegistered()) {
             RegistrationActivity.startRegistrationActivity(this, R.string.registration_error_device_deleted);
             finish();
             return;

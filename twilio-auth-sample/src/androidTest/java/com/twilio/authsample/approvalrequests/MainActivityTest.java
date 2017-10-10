@@ -1,32 +1,5 @@
 package com.twilio.authsample.approvalrequests;
 
-import android.content.Intent;
-import android.support.test.espresso.contrib.NavigationViewActions;
-import android.support.test.espresso.contrib.RecyclerViewActions;
-import android.support.test.rule.ActivityTestRule;
-import android.support.test.runner.AndroidJUnit4;
-
-import com.twilio.auth.external.ApprovalRequest;
-import com.twilio.auth.external.ApprovalRequestStatus;
-import com.twilio.auth.external.ApprovalRequests;
-import com.twilio.authsample.R;
-import com.twilio.authsample.main.MainActivity;
-import com.twilio.authsample.matchers.RecyclerViewItemCountAssertion;
-import com.twilio.authsample.matchers.RecyclerViewItemMatcher;
-import com.twilio.authsample.matchers.ToolbarTitleMatcher;
-import com.twilio.authsample.mocks.MockApprovalRequest;
-import com.twilio.authsample.mocks.MockTwilioAuth;
-import com.twilio.authsample.mocks.TestApp;
-
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 import static android.support.test.InstrumentationRegistry.getTargetContext;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
@@ -37,8 +10,36 @@ import static android.support.test.espresso.matcher.ViewMatchers.hasDescendant;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
+
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.is;
+
+import android.content.Intent;
+import android.support.test.espresso.contrib.NavigationViewActions;
+import android.support.test.espresso.contrib.RecyclerViewActions;
+import android.support.test.rule.ActivityTestRule;
+import android.support.test.runner.AndroidJUnit4;
+
+import com.twilio.authenticator.external.ApprovalRequest;
+import com.twilio.authenticator.external.ApprovalRequestStatus;
+import com.twilio.authenticator.external.ApprovalRequests;
+import com.twilio.authsample.R;
+import com.twilio.authsample.main.MainActivity;
+import com.twilio.authsample.matchers.RecyclerViewItemCountAssertion;
+import com.twilio.authsample.matchers.RecyclerViewItemMatcher;
+import com.twilio.authsample.matchers.ToolbarTitleMatcher;
+import com.twilio.authsample.mocks.MockApprovalRequest;
+import com.twilio.authsample.mocks.MockTwilioAuthenticator;
+import com.twilio.authsample.mocks.TestApp;
+
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Created by jsuarez on 6/1/16.
@@ -55,13 +56,13 @@ public class MainActivityTest {
     public ActivityTestRule<MainActivity> mainActivityTestRule =
             new ActivityTestRule<>(MainActivity.class, false, false);
 
-    private MockTwilioAuth mockTwilioAuth;
+    private MockTwilioAuthenticator mockTwilioAuthenticator;
 
     @Before
     public void setUp() throws Exception {
         TestApp application = TestApp.TEST_APP;
-        mockTwilioAuth = new MockTwilioAuth(application, true);
-        application.setMockTwilioAuth(mockTwilioAuth);
+        mockTwilioAuthenticator = new MockTwilioAuthenticator(application, true);
+        application.setMockTwilioAuthenticator(mockTwilioAuthenticator);
 
         ApprovalRequests approvalRequests = getMockApprovalRequests();
         MockApprovalRequest.Builder builder = new MockApprovalRequest.Builder();
@@ -90,7 +91,7 @@ public class MainActivityTest {
         builder.setStatus(ApprovalRequestStatus.denied);
         builder.setCreationDate(new Date());
         approvalRequests.getDenied().add(builder.createMockApprovalRequest());
-        mockTwilioAuth.setApprovalRequests(approvalRequests);
+        mockTwilioAuthenticator.setApprovalRequests(approvalRequests);
         Intent mainActivityIntent = new Intent(getTargetContext(), MainActivity.class);
         mainActivityTestRule.launchActivity(mainActivityIntent);
     }
@@ -153,7 +154,7 @@ public class MainActivityTest {
     @Test
     public void testTokensView() throws Exception {
         // Open navigation menu
-        mockTwilioAuth.setTotp("123456");
+        mockTwilioAuthenticator.setTotp("123456");
         onView(withId(R.id.drawer_layout)).perform(open());
         onView(withId(R.id.nav_view)).perform(NavigationViewActions.navigateTo(R.id.nav_tokens));
 

@@ -14,8 +14,8 @@ import android.widget.TextView;
 
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
-import com.twilio.auth.external.ApprovalRequest;
-import com.twilio.auth.external.ApprovalRequestStatus;
+import com.twilio.authenticator.external.ApprovalRequest;
+import com.twilio.authenticator.external.ApprovalRequestStatus;
 import com.twilio.authsample.App;
 import com.twilio.authsample.R;
 import com.twilio.authsample.approvalrequests.adapters.ApprovalRequestsAdapter;

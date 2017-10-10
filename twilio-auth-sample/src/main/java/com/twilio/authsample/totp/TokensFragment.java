@@ -10,8 +10,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.authy.commonandroid.external.TwilioException;
-import com.twilio.auth.TwilioAuth;
-import com.twilio.auth.external.TOTPCallback;
+import com.twilio.authenticator.TwilioAuthenticator;
+import com.twilio.authenticator.external.TOTPCallback;
 import com.twilio.authsample.App;
 import com.twilio.authsample.R;
 import com.twilio.authsample.approvalrequests.RequestsFragment;
@@ -27,7 +27,7 @@ public class TokensFragment extends Fragment implements TOTPCallback, TokenTimer
     private final static int TOTP_UPDATE_INTERVAL_MILLIS = 20000;
     private static final int TICK_INTERVAL_TIME_MILLIS = 50;
 
-    private TwilioAuth twilioAuth;
+    private TwilioAuthenticator twilioAuthenticator;
     private Handler handler = new Handler();
     private TokenTimer tokenTimer;
     // Runnable
@@ -95,7 +95,7 @@ public class TokensFragment extends Fragment implements TOTPCallback, TokenTimer
         String errorMessage = exception instanceof TwilioException ? ((TwilioException) exception).getBody() : getString(R.string.approval_request_fetch_error);
         messageHelper.show(rootView, errorMessage);
 
-        if (!twilioAuth.isDeviceRegistered() && getActivity() != null) {
+        if (!twilioAuthenticator.isDeviceRegistered() && getActivity() != null) {
             RegistrationActivity.startRegistrationActivity(getActivity(), R.string.registration_error_device_deleted);
             getActivity().finish();
             return;
@@ -114,7 +114,7 @@ public class TokensFragment extends Fragment implements TOTPCallback, TokenTimer
 
 
     private void initVars() {
-        twilioAuth = ((App) getContext().getApplicationContext()).getTwilioAuth();
+        twilioAuthenticator = ((App) getContext().getApplicationContext()).getTwilioAuthenticator();
         tokenTimer = new TokenTimer(TICK_INTERVAL_TIME_MILLIS, TOTP_UPDATE_INTERVAL_MILLIS);
         messageHelper = new MessageHelper();
     }
@@ -137,7 +137,7 @@ public class TokensFragment extends Fragment implements TOTPCallback, TokenTimer
     }
 
     private void updateTOTP() {
-        twilioAuth.getTOTP(this);
+        twilioAuthenticator.getTOTP(this);
         tokenTimer.restart();
     }
 

@@ -1,6 +1,6 @@
 package com.twilio.authsample.mocks;
 
-import com.twilio.auth.TwilioAuth;
+import com.twilio.authenticator.TwilioAuthenticator;
 import com.twilio.authsample.App;
 
 /**
@@ -9,22 +9,22 @@ import com.twilio.authsample.App;
 public class TestApp extends App {
 
     public static TestApp TEST_APP;
-    private MockTwilioAuth mockTwilioAuth;
+    private MockTwilioAuthenticator mockTwilioAuthenticator;
 
     @Override
     public void onCreate() {
         super.onCreate();
         TEST_APP = this;
-        mockTwilioAuth = new MockTwilioAuth(this, false);
+        mockTwilioAuthenticator = new MockTwilioAuthenticator(this, false);
     }
 
     @Override
-    public TwilioAuth getTwilioAuth() {
-        return mockTwilioAuth;
+    public TwilioAuthenticator getTwilioAuthenticator() {
+        return mockTwilioAuthenticator;
     }
 
-    public void setMockTwilioAuth(MockTwilioAuth mockTwilioAuth) {
-        this.mockTwilioAuth = mockTwilioAuth;
+    public void setMockTwilioAuthenticator(MockTwilioAuthenticator mockTwilioAuthenticator) {
+        this.mockTwilioAuthenticator = mockTwilioAuthenticator;
     }
 
 }

@@ -2,7 +2,7 @@ package com.twilio.authsample.mocks;
 
 import android.provider.Settings;
 
-import com.twilio.auth.TwilioAuth;
+import com.twilio.authenticator.TwilioAuthenticator;
 import com.twilio.authsample.App;
 
 /**
@@ -11,7 +11,7 @@ import com.twilio.authsample.App;
 
 public class TestApp extends App {
 
-    MockTwilioAuth mockTwilioAuth;
+    MockTwilioAuthenticator mockTwilioAuthenticator;
 
     @Override
     public void onCreate() {
@@ -20,11 +20,11 @@ public class TestApp extends App {
     }
 
     @Override
-    public TwilioAuth getTwilioAuth() {
-        return mockTwilioAuth;
+    public TwilioAuthenticator getTwilioAuthenticator() {
+        return mockTwilioAuthenticator;
     }
 
-    public void setTwilioAuth(MockTwilioAuth mockTwilioAuth) {
-        this.mockTwilioAuth = mockTwilioAuth;
+    public void setTwilioAuth(MockTwilioAuthenticator mockTwilioAuthenticator) {
+        this.mockTwilioAuthenticator = mockTwilioAuthenticator;
     }
 }

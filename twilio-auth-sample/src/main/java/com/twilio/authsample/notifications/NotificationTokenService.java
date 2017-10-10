@@ -2,12 +2,12 @@ package com.twilio.authsample.notifications;
 
 import android.util.Log;
 
-import com.twilio.auth.TwilioAuth;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.FirebaseInstanceIdService;
+import com.twilio.authenticator.TwilioAuthenticator;
 import com.twilio.authsample.App;
 import com.twilio.authsample.utils.AuthyActivityListener;
 import com.twilio.authsample.utils.AuthyTask;
-import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.iid.FirebaseInstanceIdService;
 
 /**
  * Created by jsuarez on 11/18/16.
@@ -16,18 +16,18 @@ import com.google.firebase.iid.FirebaseInstanceIdService;
 public class NotificationTokenService extends FirebaseInstanceIdService implements AuthyActivityListener<Void> {
 
     private static final String TAG = NotificationTokenService.class.getSimpleName();
-    private TwilioAuth twilioAuth;
+    private TwilioAuthenticator twilioAuthenticator;
 
     @Override
     public void onTokenRefresh() {
         super.onTokenRefresh();
-        twilioAuth = ((App) getApplicationContext()).getTwilioAuth();
+        twilioAuthenticator = ((App) getApplicationContext()).getTwilioAuthenticator();
 
         // Get updated InstanceID token.
         String refreshedToken = FirebaseInstanceId.getInstance().getToken();
         Log.d(TAG, "Refreshed token: " + refreshedToken);
 
-        if (twilioAuth.isDeviceRegistered()) {
+        if (twilioAuthenticator.isDeviceRegistered()) {
             sendPushToken(refreshedToken);
         }
     }
@@ -36,7 +36,7 @@ public class NotificationTokenService extends FirebaseInstanceIdService implemen
         new AuthyTask<Void>(this) {
             @Override
             public Void executeOnBackground() {
-                twilioAuth.setPushToken(refreshedToken);
+                twilioAuthenticator.setPushToken(refreshedToken);
                 return null;
             }
         }.execute();

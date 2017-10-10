@@ -1,25 +1,26 @@
 package com.twilio.authsample.registration;
 
+import static android.support.test.InstrumentationRegistry.getTargetContext;
+import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.assertion.ViewAssertions.doesNotExist;
+import static android.support.test.espresso.assertion.ViewAssertions.matches;
+import static android.support.test.espresso.matcher.ViewMatchers.withId;
+
+import static org.hamcrest.core.Is.is;
+
 import android.content.Intent;
 import android.support.test.espresso.intent.rule.IntentsTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.twilio.authsample.R;
 import com.twilio.authsample.matchers.ToolbarTitleMatcher;
-import com.twilio.authsample.mocks.MockTwilioAuth;
+import com.twilio.authsample.mocks.MockTwilioAuthenticator;
 import com.twilio.authsample.mocks.TestApp;
 
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import static android.support.test.InstrumentationRegistry.getTargetContext;
-import static android.support.test.espresso.Espresso.onView;
-import static android.support.test.espresso.assertion.ViewAssertions.doesNotExist;
-import static android.support.test.espresso.assertion.ViewAssertions.matches;
-import static android.support.test.espresso.matcher.ViewMatchers.withId;
-import static org.hamcrest.core.Is.is;
 
 /**
  * Created by jsuarez on 5/12/16.
@@ -35,7 +36,7 @@ public class RegistrationActivityTestRegistered {
     @Before
     public void setUp() throws Exception {
         TestApp application = TestApp.TEST_APP;
-        application.setMockTwilioAuth(new MockTwilioAuth(application, true));
+        application.setMockTwilioAuthenticator(new MockTwilioAuthenticator(application, true));
         registrationActivityTestRule.launchActivity(new Intent(getTargetContext(), RegistrationActivity.class));
     }
 

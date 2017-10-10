@@ -18,7 +18,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.firebase.iid.FirebaseInstanceId;
-import com.twilio.auth.TwilioAuth;
+import com.twilio.authenticator.TwilioAuthenticator;
 import com.twilio.authsample.App;
 import com.twilio.authsample.R;
 import com.twilio.authsample.main.MainActivity;
@@ -43,7 +43,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class RegistrationActivity extends AppCompatActivity {
 
     public static final String EXTRA_ERROR_MESSAGE_ID = "error_message";
-    private TwilioAuth twilioAuth;
+    private TwilioAuthenticator twilioAuthenticator;
     private Button registerDeviceButton;
     private EditText authyId;
     private EditText backendUrl;
@@ -84,7 +84,7 @@ public class RegistrationActivity extends AppCompatActivity {
         initViews();
         initData();
 
-        if (twilioAuth.isDeviceRegistered()) {
+        if (twilioAuthenticator.isDeviceRegistered()) {
             startMainActivity();
         } else {
             startRegistrationProcess();
@@ -113,7 +113,7 @@ public class RegistrationActivity extends AppCompatActivity {
     }
 
     private void initData() {
-        twilioAuth = ((App) getApplicationContext()).getTwilioAuth();
+        twilioAuthenticator = ((App) getApplicationContext()).getTwilioAuthenticator();
 
         int errorMessageId = getIntent().getIntExtra(EXTRA_ERROR_MESSAGE_ID, -1);
         if (errorMessageId != -1) {
@@ -256,7 +256,7 @@ public class RegistrationActivity extends AppCompatActivity {
         new AuthyTask<Void>(registerDeviceListener) {
             @Override
             public Void executeOnBackground() {
-                twilioAuth.registerDevice(registrationToken, FirebaseInstanceId.getInstance().getToken(), integrationApiKey);
+                twilioAuthenticator.registerDevice(registrationToken, FirebaseInstanceId.getInstance().getToken(), integrationApiKey);
                 return null;
             }
         }.execute();

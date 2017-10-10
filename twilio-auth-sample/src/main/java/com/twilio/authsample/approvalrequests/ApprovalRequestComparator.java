@@ -1,6 +1,6 @@
 package com.twilio.authsample.approvalrequests;
 
-import com.twilio.auth.external.ApprovalRequest;
+import com.twilio.authenticator.external.ApprovalRequest;
 
 import java.util.Comparator;
 import java.util.Date;

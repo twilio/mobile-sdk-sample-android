@@ -10,7 +10,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.twilio.auth.TwilioAuth;
+import com.twilio.authenticator.TwilioAuthenticator;
 import com.twilio.authsample.App;
 import com.twilio.authsample.R;
 import com.twilio.authsample.approvalrequests.RequestsFragment;
@@ -21,7 +21,7 @@ import com.twilio.authsample.ui.ClearDataConfirmationDialog;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, ClearDataConfirmationDialog.OnClearDataConfirmationListener {
 
-    private TwilioAuth twilioAuth;
+    private TwilioAuthenticator twilioAuthenticator;
     private DrawerLayout drawer;
     private NavigationView navigationView;
     private Toolbar toolbar;
@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onClearDataRequested() {
-        twilioAuth.clearLocalData();
+        twilioAuthenticator.clearLocalData();
         RegistrationActivity.startRegistrationActivity(this, R.string.registration_error_device_deleted);
     }
 
@@ -112,7 +112,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void initVars() {
-        twilioAuth = ((App) getApplicationContext()).getTwilioAuth();
+        twilioAuthenticator = ((App) getApplicationContext()).getTwilioAuthenticator();
 
         // Select the first item by default
         onNavigationItemSelected(navigationView.getMenu().getItem(0));

@@ -6,19 +6,19 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
 import com.authy.commonandroid.external.TwilioException;
-import com.twilio.auth.TwilioAuth;
-import com.twilio.auth.external.ApprovalRequest;
-import com.twilio.auth.external.ApprovalRequestStatus;
-import com.twilio.auth.external.ApprovalRequests;
-import com.twilio.auth.external.TOTPCallback;
-import com.twilio.auth.external.TimeInterval;
+import com.twilio.authenticator.TwilioAuthenticator;
+import com.twilio.authenticator.external.ApprovalRequest;
+import com.twilio.authenticator.external.ApprovalRequestStatus;
+import com.twilio.authenticator.external.ApprovalRequests;
+import com.twilio.authenticator.external.TOTPCallback;
+import com.twilio.authenticator.external.TimeInterval;
 
 import java.util.List;
 
 /**
  * Created by jsuarez on 5/12/16.
  */
-public class MockTwilioAuth extends TwilioAuth {
+public class MockTwilioAuthenticator extends TwilioAuthenticator {
 
     private boolean registered;
     private boolean errorOnUpdate;
@@ -26,7 +26,7 @@ public class MockTwilioAuth extends TwilioAuth {
     private String deviceId = "test_device_id";
     private String totp;
 
-    public MockTwilioAuth(Context context, boolean registered) {
+    public MockTwilioAuthenticator(Context context, boolean registered) {
         super(context);
         this.registered = registered;
     }

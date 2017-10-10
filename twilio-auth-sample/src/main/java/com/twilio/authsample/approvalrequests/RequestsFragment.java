@@ -18,10 +18,10 @@ import android.view.ViewGroup;
 import com.authy.commonandroid.external.TwilioException;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
-import com.twilio.auth.TwilioAuth;
-import com.twilio.auth.external.ApprovalRequest;
-import com.twilio.auth.external.ApprovalRequestStatus;
-import com.twilio.auth.external.ApprovalRequests;
+import com.twilio.authenticator.TwilioAuthenticator;
+import com.twilio.authenticator.external.ApprovalRequest;
+import com.twilio.authenticator.external.ApprovalRequestStatus;
+import com.twilio.authenticator.external.ApprovalRequests;
 import com.twilio.authsample.App;
 import com.twilio.authsample.R;
 import com.twilio.authsample.approvalrequests.adapters.ApprovalRequestsAdapter;
@@ -50,7 +50,7 @@ public class RequestsFragment extends Fragment implements
     private ViewPager viewPager;
     private TabLayout tabLayout;
 
-    private TwilioAuth twilioAuth;
+    private TwilioAuthenticator twilioAuthenticator;
     private Bus bus;
     private MessageHelper messageHelper;
 
@@ -110,7 +110,7 @@ public class RequestsFragment extends Fragment implements
         final Snackbar snackbar = messageHelper.show(viewPager, errorMessage);
         bus.post(new ApprovalRequestsUpdatedEvent(true));
 
-        if (!twilioAuth.isDeviceRegistered() && getActivity() != null) {
+        if (!twilioAuthenticator.isDeviceRegistered() && getActivity() != null) {
             RegistrationActivity.startRegistrationActivity(getActivity(), R.string.registration_error_device_deleted);
             getActivity().finish();
             return;
@@ -175,7 +175,7 @@ public class RequestsFragment extends Fragment implements
 
     private void initVars() {
         App app = (App) getActivity().getApplicationContext();
-        twilioAuth = (app).getTwilioAuth();
+        twilioAuthenticator = (app).getTwilioAuthenticator();
 
         bus = (app).getBus();
 
@@ -189,7 +189,7 @@ public class RequestsFragment extends Fragment implements
 
             @Override
             public ApprovalRequests executeOnBackground() {
-                return twilioAuth.getApprovalRequests(statuses, null);
+                return twilioAuthenticator.getApprovalRequests(statuses, null);
             }
         }.execute();
     }

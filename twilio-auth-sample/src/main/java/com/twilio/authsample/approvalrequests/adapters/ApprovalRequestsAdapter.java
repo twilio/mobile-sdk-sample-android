@@ -10,11 +10,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+import com.twilio.authenticator.external.ApprovalRequest;
 import com.twilio.authsample.R;
 import com.twilio.authsample.approvalrequests.ApprovalRequestComparator;
 import com.twilio.authsample.utils.TimeFormattingUtils;
-import com.twilio.auth.external.ApprovalRequest;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Collections;

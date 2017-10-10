@@ -13,15 +13,15 @@ import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 
 import com.authy.commonandroid.external.TwilioException;
-import com.twilio.auth.TwilioAuth;
-import com.twilio.auth.external.ApprovalRequest;
-import com.twilio.auth.external.ApprovalRequests;
+import com.google.firebase.messaging.FirebaseMessagingService;
+import com.google.firebase.messaging.RemoteMessage;
+import com.twilio.authenticator.TwilioAuthenticator;
+import com.twilio.authenticator.external.ApprovalRequest;
+import com.twilio.authenticator.external.ApprovalRequests;
 import com.twilio.authsample.App;
 import com.twilio.authsample.R;
 import com.twilio.authsample.approvalrequests.detail.ApprovalRequestDetailActivity;
 import com.twilio.authsample.approvalrequests.events.RefreshApprovalRequestsEvent;
-import com.google.firebase.messaging.FirebaseMessagingService;
-import com.google.firebase.messaging.RemoteMessage;
 
 import java.util.Map;
 
@@ -54,14 +54,14 @@ public class MessagingService extends FirebaseMessagingService {
         // Get the approval request id
         String approvalRequestUuid = messageData.get("approval_request_uuid");
 
-        TwilioAuth twilioAuth = ((App) getApplicationContext()).getTwilioAuth();
+        TwilioAuthenticator twilioAuthenticator = ((App) getApplicationContext()).getTwilioAuthenticator();
 
-        if (!twilioAuth.isDeviceRegistered()) {
+        if (!twilioAuthenticator.isDeviceRegistered()) {
             Log.d(TAG, "Device not registered");
             return;
         }
 
-        ApprovalRequest approvalRequest = getApprovalRequestFromId(twilioAuth, approvalRequestUuid);
+        ApprovalRequest approvalRequest = getApprovalRequestFromId(twilioAuthenticator, approvalRequestUuid);
         if (approvalRequest == null) {
             Log.d(TAG, "ApprovalRequest not found");
             return;
@@ -105,9 +105,9 @@ public class MessagingService extends FirebaseMessagingService {
         });
     }
 
-    private ApprovalRequest getApprovalRequestFromId(TwilioAuth twilioAuth, String approvalRequestUuid) {
+    private ApprovalRequest getApprovalRequestFromId(TwilioAuthenticator twilioAuthenticator, String approvalRequestUuid) {
         try {
-            ApprovalRequests approvalRequests = twilioAuth.getApprovalRequests(
+            ApprovalRequests approvalRequests = twilioAuthenticator.getApprovalRequests(
                     null,
                     null);
 

@@ -1,7 +1,7 @@
 package com.twilio.authsample.approvalrequests;
 
-import com.twilio.auth.external.ApprovalRequestStatus;
-import com.twilio.auth.external.ApprovalRequests;
+import com.twilio.authenticator.external.ApprovalRequestStatus;
+import com.twilio.authenticator.external.ApprovalRequests;
 
 import java.util.List;
 
