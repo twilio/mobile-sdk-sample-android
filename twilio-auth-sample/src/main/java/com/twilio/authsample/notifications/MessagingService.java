@@ -17,7 +17,6 @@ import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.twilio.authenticator.TwilioAuthenticator;
 import com.twilio.authenticator.external.ApprovalRequest;
-import com.twilio.authenticator.external.ApprovalRequests;
 import com.twilio.authsample.App;
 import com.twilio.authsample.R;
 import com.twilio.authsample.approvalrequests.detail.ApprovalRequestDetailActivity;
@@ -26,8 +25,9 @@ import com.twilio.authsample.approvalrequests.events.RefreshApprovalRequestsEven
 import java.util.Map;
 
 public class MessagingService extends FirebaseMessagingService {
-    private static final String TAG = MessagingService.class.getSimpleName();
+    public static final int NEW_REQUEST_NOTIFICATION_ID = 1;
     public static final String ONETOUCH_APPROVAL_REQUEST_TYPE = "onetouch_approval_request";
+    private static final String TAG = MessagingService.class.getSimpleName();
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
@@ -75,7 +75,7 @@ public class MessagingService extends FirebaseMessagingService {
         Intent intent = ApprovalRequestDetailActivity.createIntent(this, approvalRequest);
         stackBuilder.addNextIntent(intent);
 
-        PendingIntent pendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_ONE_SHOT);
+        PendingIntent pendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
 
         Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
@@ -89,7 +89,7 @@ public class MessagingService extends FirebaseMessagingService {
         NotificationManager notificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-        notificationManager.notify(0, notificationBuilder.build());
+        notificationManager.notify(NEW_REQUEST_NOTIFICATION_ID, notificationBuilder.build());
 
         // Update the main views if visible
         sendEventToUpdateUI();
@@ -107,11 +107,8 @@ public class MessagingService extends FirebaseMessagingService {
 
     private ApprovalRequest getApprovalRequestFromId(TwilioAuthenticator twilioAuthenticator, String approvalRequestUuid) {
         try {
-            ApprovalRequests approvalRequests = twilioAuthenticator.getApprovalRequests(
-                    null,
-                    null);
 
-            return approvalRequests.getApprovalRequestById(approvalRequestUuid);
+            return twilioAuthenticator.getRequest(approvalRequestUuid);
         } catch (TwilioException e) {
             return null;
         }
