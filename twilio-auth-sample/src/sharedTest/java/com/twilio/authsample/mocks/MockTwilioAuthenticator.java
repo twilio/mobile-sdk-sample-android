@@ -18,8 +18,9 @@ import java.util.List;
 /**
  * Created by jsuarez on 5/12/16.
  */
-public class MockTwilioAuthenticator extends TwilioAuthenticator {
+public class MockTwilioAuthenticator implements TwilioAuthenticator {
 
+    private final Context context;
     private boolean registered;
     private boolean errorOnUpdate;
     private ApprovalRequests approvalRequests;
@@ -27,7 +28,7 @@ public class MockTwilioAuthenticator extends TwilioAuthenticator {
     private String totp;
 
     public MockTwilioAuthenticator(Context context, boolean registered) {
-        super(context);
+        this.context = context;
         this.registered = registered;
     }
 
@@ -39,6 +40,11 @@ public class MockTwilioAuthenticator extends TwilioAuthenticator {
     @Override
     public ApprovalRequests getApprovalRequests(List<ApprovalRequestStatus> statusList, TimeInterval timeInterval) {
         return getApprovalRequests();
+    }
+
+    @Override
+    public void setPushToken(String pushToken) {
+
     }
 
     @Override
@@ -61,6 +67,11 @@ public class MockTwilioAuthenticator extends TwilioAuthenticator {
     }
 
     @Override
+    public void clearLocalData() {
+        this.registered = false;
+    }
+
+    @Override
     public void getTOTP(TOTPCallback totpCallback) {
         if (TextUtils.isEmpty(totp)) {
             totpCallback.onTOTPError(new Exception("Test exception, invalid TOTP"));
@@ -68,6 +79,11 @@ public class MockTwilioAuthenticator extends TwilioAuthenticator {
         }
 
         totpCallback.onTOTPReceived(totp);
+    }
+
+    @Override
+    public ApprovalRequest getRequest(String uuid) {
+        return getApprovalRequests().getApprovalRequestById(uuid);
     }
 
     @Override
