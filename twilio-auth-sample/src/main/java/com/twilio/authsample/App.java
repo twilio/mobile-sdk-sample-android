@@ -17,9 +17,13 @@ public class App extends Application {
     public void onCreate() {
         super.onCreate();
 
-        twilioAuthenticator = TwilioAuthenticator.getInstance(this);
+        twilioAuthenticator = buildTwilioAuthenticator();
 
         bus = new Bus();
+    }
+
+    protected TwilioAuthenticator buildTwilioAuthenticator() {
+        return TwilioAuthenticator.Instance.getInstance(this);
     }
 
     public TwilioAuthenticator getTwilioAuthenticator() {
