@@ -15,7 +15,7 @@ public class TestApp extends App {
     public void onCreate() {
         super.onCreate();
         TEST_APP = this;
-        mockTwilioAuthenticator = new MockTwilioAuthenticator(this, false);
+        mockTwilioAuthenticator = new MockTwilioAuthenticator(false);
     }
 
     @Override

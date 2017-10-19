@@ -23,9 +23,10 @@ public class App extends Application {
     }
 
     protected TwilioAuthenticator buildTwilioAuthenticator() {
-        return TwilioAuthenticator.Instance.getInstance(this);
+        return TwilioAuthenticator.Instance.get(this);
     }
 
+    //Note: In a real life app this should be injected where it's needed instead of this :/
     public TwilioAuthenticator getTwilioAuthenticator() {
         return twilioAuthenticator;
     }

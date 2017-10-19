@@ -23,6 +23,7 @@ public class MockApprovalRequest implements ApprovalRequest {
     private String transactionId;
     private ApprovalRequestStatus status;
     private String message;
+    private String appId;
 
     public MockApprovalRequest(String transactionId, ApprovalRequestStatus status, String message, Map<String, String> details, Date creationDate, long expirationTimeStamp) {
         this.transactionId = transactionId;
@@ -89,8 +90,8 @@ public class MockApprovalRequest implements ApprovalRequest {
     }
 
     @Override
-    public Long getCustomerUuid() {
-        return null;
+    public String getAppId() {
+        return appId;
     }
 
     @Override

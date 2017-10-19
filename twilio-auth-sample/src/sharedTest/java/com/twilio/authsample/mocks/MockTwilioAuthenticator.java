@@ -1,16 +1,16 @@
 package com.twilio.authsample.mocks;
 
-import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.text.TextUtils;
 
 import com.authy.commonandroid.external.TwilioException;
 import com.twilio.authenticator.TwilioAuthenticator;
 import com.twilio.authenticator.external.ApprovalRequest;
 import com.twilio.authenticator.external.ApprovalRequestStatus;
 import com.twilio.authenticator.external.ApprovalRequests;
+import com.twilio.authenticator.external.AuthenticatorToken;
 import com.twilio.authenticator.external.TOTPCallback;
+import com.twilio.authenticator.external.TOTPs;
 import com.twilio.authenticator.external.TimeInterval;
 
 import java.util.List;
@@ -20,15 +20,14 @@ import java.util.List;
  */
 public class MockTwilioAuthenticator implements TwilioAuthenticator {
 
-    private final Context context;
     private boolean registered;
     private boolean errorOnUpdate;
     private ApprovalRequests approvalRequests;
     private String deviceId = "test_device_id";
-    private String totp;
+    private TOTPs totps;
+    private List<AuthenticatorToken> apps;
 
-    public MockTwilioAuthenticator(Context context, boolean registered) {
-        this.context = context;
+    public MockTwilioAuthenticator(boolean registered) {
         this.registered = registered;
     }
 
@@ -73,12 +72,12 @@ public class MockTwilioAuthenticator implements TwilioAuthenticator {
 
     @Override
     public void getTOTP(TOTPCallback totpCallback) {
-        if (TextUtils.isEmpty(totp)) {
+        if (totps == null || totps.isEmpty()) {
             totpCallback.onTOTPError(new Exception("Test exception, invalid TOTP"));
             return;
         }
 
-        totpCallback.onTOTPReceived(totp);
+        totpCallback.onTOTPReceived(totps);
     }
 
     @Override
@@ -93,14 +92,6 @@ public class MockTwilioAuthenticator implements TwilioAuthenticator {
 
     public void setDeviceId(String deviceId) {
         this.deviceId = deviceId;
-    }
-
-    public String getTotp() {
-        return totp;
-    }
-
-    public void setTotp(String totp) {
-        this.totp = totp;
     }
 
     public boolean isErrorOnUpdate() {
@@ -121,5 +112,14 @@ public class MockTwilioAuthenticator implements TwilioAuthenticator {
 
     public void setApprovalRequests(ApprovalRequests approvalRequests) {
         this.approvalRequests = approvalRequests;
+    }
+
+    public void setApps(List<AuthenticatorToken> apps) {
+        this.apps = apps;
+    }
+
+    @Override
+    public List<AuthenticatorToken> getApps() {
+        return this.apps;
     }
 }
