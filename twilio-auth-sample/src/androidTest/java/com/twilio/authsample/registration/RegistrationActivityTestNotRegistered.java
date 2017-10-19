@@ -36,7 +36,7 @@ public class RegistrationActivityTestNotRegistered {
     @Before
     public void setUp() throws Exception {
         TestApp application = TestApp.TEST_APP;
-        application.setMockTwilioAuthenticator(new MockTwilioAuthenticator(application, false));
+        application.setMockTwilioAuthenticator(new MockTwilioAuthenticator(false));
         registrationActivityTestRule.launchActivity(new Intent(getTargetContext(), RegistrationActivity.class));
     }
 

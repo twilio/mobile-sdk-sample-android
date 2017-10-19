@@ -12,17 +12,19 @@ import android.widget.TextView;
 import com.authy.commonandroid.external.TwilioException;
 import com.twilio.authenticator.TwilioAuthenticator;
 import com.twilio.authenticator.external.TOTPCallback;
-import com.twilio.authsample.App;
+import com.twilio.authenticator.external.TOTPs;
 import com.twilio.authsample.R;
 import com.twilio.authsample.approvalrequests.RequestsFragment;
 import com.twilio.authsample.registration.RegistrationActivity;
 import com.twilio.authsample.ui.views.AuthyTimerView;
 import com.twilio.authsample.utils.MessageHelper;
 
+import java.util.Map;
+
 /**
  * A simple {@link Fragment} to display a TOTP code with a timer
  */
-public class TokensFragment extends Fragment implements TOTPCallback, TokenTimer.OnTimerListener {
+public class TokenDetailsFragment extends Fragment implements TOTPCallback, TokenTimer.OnTimerListener {
 
     private final static int TOTP_UPDATE_INTERVAL_MILLIS = 20000;
     private static final int TICK_INTERVAL_TIME_MILLIS = 50;
@@ -42,8 +44,9 @@ public class TokensFragment extends Fragment implements TOTPCallback, TokenTimer
     private AuthyTimerView authyTimerView;
     private MessageHelper messageHelper;
     private View rootView;
+    private String appId;
 
-    public TokensFragment() {
+    public TokenDetailsFragment() {
         // Required empty public constructor
     }
 
@@ -52,8 +55,13 @@ public class TokensFragment extends Fragment implements TOTPCallback, TokenTimer
      *
      * @return A new instance of fragment TokensFragment.
      */
-    public static TokensFragment newInstance() {
-        return new TokensFragment();
+    public static TokenDetailsFragment newInstance(TwilioAuthenticator twilioAuthenticator,
+                                                   String appId) {
+
+        TokenDetailsFragment fragment = new TokenDetailsFragment();
+        fragment.twilioAuthenticator = twilioAuthenticator;
+        fragment.appId = appId;
+        return fragment;
     }
 
     @Override
@@ -66,7 +74,7 @@ public class TokensFragment extends Fragment implements TOTPCallback, TokenTimer
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_tokens, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_token_details, container, false);
         initViews(rootView);
         return rootView;
     }
@@ -85,8 +93,8 @@ public class TokensFragment extends Fragment implements TOTPCallback, TokenTimer
     }
 
     @Override
-    public void onTOTPReceived(String totp) {
-        totpView.setText(totp);
+    public void onTOTPReceived(TOTPs totps) {
+        totpView.setText(totps.get(appId));
     }
 
     @Override
@@ -104,6 +112,7 @@ public class TokensFragment extends Fragment implements TOTPCallback, TokenTimer
 
     private void initViews(View rootView) {
         this.rootView = rootView;
+
         totpView = (TextView) rootView.findViewById(R.id.totp);
         authyTimerView = (AuthyTimerView) rootView.findViewById(R.id.timer);
         authyTimerView.setArcColor(getResources().getColor(R.color.colorAccent));
@@ -114,7 +123,6 @@ public class TokensFragment extends Fragment implements TOTPCallback, TokenTimer
 
 
     private void initVars() {
-        twilioAuthenticator = ((App) getContext().getApplicationContext()).getTwilioAuthenticator();
         tokenTimer = new TokenTimer(TICK_INTERVAL_TIME_MILLIS, TOTP_UPDATE_INTERVAL_MILLIS);
         messageHelper = new MessageHelper();
     }

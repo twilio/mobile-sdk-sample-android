@@ -15,7 +15,6 @@ import com.twilio.authsample.App;
 import com.twilio.authsample.R;
 import com.twilio.authsample.approvalrequests.RequestsFragment;
 import com.twilio.authsample.registration.RegistrationActivity;
-import com.twilio.authsample.totp.TokensFragment;
 import com.twilio.authsample.ui.ClearDataConfirmationDialog;
 
 public class MainActivity extends AppCompatActivity
@@ -75,7 +74,8 @@ public class MainActivity extends AppCompatActivity
                     .commit();
             getSupportActionBar().setTitle(R.string.menu_navigation_requests);
         } else if (id == R.id.nav_tokens) {
-            TokensFragment tokensFragment = TokensFragment.newInstance();
+            TokensFragment tokensFragment = TokensFragment.newInstance(twilioAuthenticator);
+            tokensFragment.setHasOptionsMenu(true);
             getSupportFragmentManager()
                     .beginTransaction()
                     .replace(R.id.container, tokensFragment)

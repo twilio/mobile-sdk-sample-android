@@ -1,5 +1,34 @@
 package com.twilio.authsample.approvalrequests;
 
+import android.content.Intent;
+import android.support.test.espresso.contrib.NavigationViewActions;
+import android.support.test.espresso.contrib.RecyclerViewActions;
+import android.support.test.rule.ActivityTestRule;
+import android.support.test.runner.AndroidJUnit4;
+
+import com.twilio.authenticator.external.ApprovalRequestStatus;
+import com.twilio.authenticator.external.ApprovalRequests;
+import com.twilio.authenticator.external.AuthenticatorToken;
+import com.twilio.authsample.R;
+import com.twilio.authsample.main.MainActivity;
+import com.twilio.authsample.matchers.RecyclerViewItemCountAssertion;
+import com.twilio.authsample.matchers.RecyclerViewItemMatcher;
+import com.twilio.authsample.matchers.ToolbarTitleMatcher;
+import com.twilio.authsample.mocks.MockApp;
+import com.twilio.authsample.mocks.MockApprovalRequest;
+import com.twilio.authsample.mocks.MockApprovalRequests;
+import com.twilio.authsample.mocks.MockTwilioAuthenticator;
+import com.twilio.authsample.mocks.TestApp;
+
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+
 import static android.support.test.InstrumentationRegistry.getTargetContext;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
@@ -10,36 +39,8 @@ import static android.support.test.espresso.matcher.ViewMatchers.hasDescendant;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
-
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.is;
-
-import android.content.Intent;
-import android.support.test.espresso.contrib.NavigationViewActions;
-import android.support.test.espresso.contrib.RecyclerViewActions;
-import android.support.test.rule.ActivityTestRule;
-import android.support.test.runner.AndroidJUnit4;
-
-import com.twilio.authenticator.external.ApprovalRequest;
-import com.twilio.authenticator.external.ApprovalRequestStatus;
-import com.twilio.authenticator.external.ApprovalRequests;
-import com.twilio.authsample.R;
-import com.twilio.authsample.main.MainActivity;
-import com.twilio.authsample.matchers.RecyclerViewItemCountAssertion;
-import com.twilio.authsample.matchers.RecyclerViewItemMatcher;
-import com.twilio.authsample.matchers.ToolbarTitleMatcher;
-import com.twilio.authsample.mocks.MockApprovalRequest;
-import com.twilio.authsample.mocks.MockTwilioAuthenticator;
-import com.twilio.authsample.mocks.TestApp;
-
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 /**
  * Created by jsuarez on 6/1/16.
@@ -61,10 +62,10 @@ public class MainActivityTest {
     @Before
     public void setUp() throws Exception {
         TestApp application = TestApp.TEST_APP;
-        mockTwilioAuthenticator = new MockTwilioAuthenticator(application, true);
+        mockTwilioAuthenticator = new MockTwilioAuthenticator(true);
         application.setMockTwilioAuthenticator(mockTwilioAuthenticator);
 
-        ApprovalRequests approvalRequests = getMockApprovalRequests();
+        ApprovalRequests approvalRequests = new MockApprovalRequests();
         MockApprovalRequest.Builder builder = new MockApprovalRequest.Builder();
         builder.setMessage(APPROVAL_REQUEST_PENDING_MESSAGE);
         builder.setTransactionId("uuid1");
@@ -152,9 +153,11 @@ public class MainActivityTest {
     }
 
     @Test
-    public void testTokensView() throws Exception {
+    public void testEmptyTokensView() throws Exception {
+        //Empty app list
+        mockTwilioAuthenticator.setApps(new ArrayList<AuthenticatorToken>());
+
         // Open navigation menu
-        mockTwilioAuthenticator.setTotp("123456");
         onView(withId(R.id.drawer_layout)).perform(open());
         onView(withId(R.id.nav_view)).perform(NavigationViewActions.navigateTo(R.id.nav_tokens));
 
@@ -162,36 +165,30 @@ public class MainActivityTest {
         CharSequence activityTitle = getTargetContext().getString(R.string.menu_navigation_tokens);
         onView(withId(R.id.toolbar)).check(matches(new ToolbarTitleMatcher(is(activityTitle))));
 
-        // Check that a totp is displayed
-        onView(withId(R.id.totp)).check(matches(isDisplayed()));
+        // Check that an empty token list is displayed
+        onView(withId(R.id.tokens_list)).check(matches(isDisplayed()));
+        onView(withId(R.id.tokens_list)).check(new RecyclerViewItemCountAssertion(0));
     }
 
-    private ApprovalRequests getMockApprovalRequests() {
-        return new ApprovalRequests() {
-            private List<ApprovalRequest> pending = new ArrayList<>();
-            private List<ApprovalRequest> approved = new ArrayList<>();
-            private List<ApprovalRequest> expired = new ArrayList<>();
-            private List<ApprovalRequest> denied = new ArrayList<>();
+    @Test
+    public void testTokensViewWithTwoTokens() throws Exception {
 
-            @Override
-            public List<ApprovalRequest> getApproved() {
-                return approved;
-            }
+        MockApp app1 = new MockApp("app_1", "First App");
+        MockApp app2 = new MockApp("app_2", "Second App");
 
-            @Override
-            public List<ApprovalRequest> getDenied() {
-                return denied;
-            }
+        //Empty app list
+        mockTwilioAuthenticator.setApps(Arrays.<AuthenticatorToken>asList(app1, app2));
 
-            @Override
-            public List<ApprovalRequest> getExpired() {
-                return expired;
-            }
+        // Open navigation menu
+        onView(withId(R.id.drawer_layout)).perform(open());
+        onView(withId(R.id.nav_view)).perform(NavigationViewActions.navigateTo(R.id.nav_tokens));
 
-            @Override
-            public List<ApprovalRequest> getPending() {
-                return pending;
-            }
-        };
+        // Check that the correct title is used
+        CharSequence activityTitle = getTargetContext().getString(R.string.menu_navigation_tokens);
+        onView(withId(R.id.toolbar)).check(matches(new ToolbarTitleMatcher(is(activityTitle))));
+
+        // Check that a list with 2 totp is displayed
+        onView(withId(R.id.tokens_list)).check(matches(isDisplayed()));
+        onView(withId(R.id.tokens_list)).check(new RecyclerViewItemCountAssertion(2));
     }
 }

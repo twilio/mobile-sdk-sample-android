@@ -21,7 +21,7 @@ public class TestApp extends App {
 
     @Override
     protected TwilioAuthenticator buildTwilioAuthenticator() {
-        return new MockTwilioAuthenticator(this, true);
+        return new MockTwilioAuthenticator(true);
     }
 
     @Override
