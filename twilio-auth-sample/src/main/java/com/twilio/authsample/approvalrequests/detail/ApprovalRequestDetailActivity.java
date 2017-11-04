@@ -22,12 +22,11 @@ import com.twilio.authenticator.TwilioAuthenticator;
 import com.twilio.authenticator.external.ApprovalRequest;
 import com.twilio.authenticator.external.ApprovalRequestLogo;
 import com.twilio.authenticator.external.ApprovalRequestStatus;
+import com.twilio.authenticator.TwilioAuthenticatorTaskCallback;
 import com.twilio.authsample.App;
 import com.twilio.authsample.R;
 import com.twilio.authsample.approvalrequests.adapters.ApprovalRequestInfoAdapter;
 import com.twilio.authsample.registration.RegistrationActivity;
-import com.twilio.authsample.utils.AuthyActivityListener;
-import com.twilio.authsample.utils.AuthyTask;
 import com.twilio.authsample.utils.ImageUtils;
 import com.twilio.authsample.utils.MessageHelper;
 import com.twilio.authsample.utils.TimeFormattingUtils;
@@ -58,44 +57,6 @@ public class ApprovalRequestDetailActivity extends AppCompatActivity {
         public void onDismissed(Snackbar snackbar, int event) {
             super.onDismissed(snackbar, event);
             finish();
-        }
-    };
-    // Listeners
-    private AuthyActivityListener<Void> approvalRequestApprovedListener = new AuthyActivityListener<Void>() {
-        @Override
-        public void onSuccess(Void result) {
-            enableButtons(false);
-            messageHelper.show(buttonBar, R.string.approve_success).addCallback(messageDismissedCallback);
-        }
-
-        @Override
-        public void onError(Exception exception) {
-            handleUpdateApprovalRequestError(exception, true);
-        }
-    };
-    private AuthyActivityListener<Void> approvalRequestDeniedListener = new AuthyActivityListener<Void>() {
-        @Override
-        public void onSuccess(Void result) {
-            enableButtons(false);
-            messageHelper.show(buttonBar, R.string.deny_success).addCallback(messageDismissedCallback);
-        }
-
-        @Override
-        public void onError(Exception exception) {
-            handleUpdateApprovalRequestError(exception, false);
-        }
-    };
-    private AuthyActivityListener<ApprovalRequest> approvalRequestListener = new AuthyActivityListener<ApprovalRequest>() {
-        @Override
-        public void onSuccess(ApprovalRequest result) {
-            approvalRequest = result;
-            bindViews(result);
-            updateProgressBar(false);
-        }
-
-        @Override
-        public void onError(Exception exception) {
-            updateProgressBar(false);
         }
     };
 
@@ -163,12 +124,20 @@ public class ApprovalRequestDetailActivity extends AppCompatActivity {
     private void initData() {
         // Show progress bar
         updateProgressBar(true);
-        new AuthyTask<ApprovalRequest>(approvalRequestListener) {
+        twilioAuthenticator.getRequest(approvalRequestUUID,
+                new TwilioAuthenticatorTaskCallback<ApprovalRequest>() {
             @Override
-            public ApprovalRequest executeOnBackground() {
-                return twilioAuthenticator.getRequest(approvalRequestUUID);
+            public void onSuccess(ApprovalRequest result) {
+                approvalRequest = result;
+                bindViews(result);
+                updateProgressBar(false);
             }
-        }.execute();
+
+            @Override
+            public void onError(Exception exception) {
+                updateProgressBar(false);
+            }
+        });
     }
 
     private void bindViews(ApprovalRequest approvalRequest) {
@@ -260,45 +229,60 @@ public class ApprovalRequestDetailActivity extends AppCompatActivity {
     }
 
     private void deny(final ApprovalRequest approvalRequest) {
-        new AuthyTask<Void>(approvalRequestDeniedListener) {
-
-            @Override
-            public Void executeOnBackground() {
-                twilioAuthenticator.denyRequest(approvalRequest);
-                return null;
-            }
-        }.execute();
+        twilioAuthenticator.denyRequest(approvalRequest,
+                new ApprovalRequestOperationCallback(Operation.DENY));
     }
 
     private void approve(final ApprovalRequest approvalRequest) {
-        new AuthyTask<Void>(approvalRequestApprovedListener) {
-
-            @Override
-            public Void executeOnBackground() {
-                twilioAuthenticator.approveRequest(approvalRequest);
-                return null;
-            }
-        }.execute();
+        twilioAuthenticator.approveRequest(
+                approvalRequest,
+                new ApprovalRequestOperationCallback(Operation.APPROVE));
     }
 
+    /**
+     * Contains the callback logic for approval requests operations
+     */
+    enum Operation {
+        APPROVE, DENY
+    }
 
-    private void handleUpdateApprovalRequestError(Exception exception, final boolean approveError) {
-        Snackbar snackbar = messageHelper.show(buttonBar, approveError ? R.string.approve_failed : R.string.deny_failed);
-        Log.e(ApprovalRequestDetailActivity.class.getSimpleName(), approveError ? "Exception while approving request" : "Exception while denying request", exception);
+    private class ApprovalRequestOperationCallback implements TwilioAuthenticatorTaskCallback<Void> {
+        private final Operation operation;
 
-        if (!twilioAuthenticator.isDeviceRegistered()) {
-            RegistrationActivity.startRegistrationActivity(this, R.string.registration_error_device_deleted);
-            finish();
-            return;
+        private ApprovalRequestOperationCallback(Operation operation) {
+            this.operation = operation;
         }
 
-        // Create refresh button
-        snackbar.setAction(R.string.approval_request_action_refresh, new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Refresh UI
-                bindViews(approvalRequest);
+        @Override
+        public void onSuccess(Void result) {
+            enableButtons(false);
+            messageHelper.show(buttonBar,
+                    operation == Operation.APPROVE ? R.string.approve_success : R.string.deny_success
+            ).addCallback(messageDismissedCallback);
+        }
+
+        @Override
+        public void onError(Exception exception) {
+            Snackbar snackbar = messageHelper.show(buttonBar,
+                    operation == Operation.APPROVE ? R.string.approve_failed : R.string.deny_failed);
+            Log.e(ApprovalRequestDetailActivity.class.getSimpleName(),
+                    operation == Operation.APPROVE ? "Exception while approving request" : "Exception while denying request",
+                    exception);
+
+            if (!twilioAuthenticator.isDeviceRegistered()) {
+                RegistrationActivity.startRegistrationActivity(ApprovalRequestDetailActivity.this, R.string.registration_error_device_deleted);
+                finish();
+                return;
             }
-        });
+
+            // Create refresh button
+            snackbar.setAction(R.string.approval_request_action_refresh, new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // Refresh UI
+                    bindViews(approvalRequest);
+                }
+            });
+        }
     }
 }

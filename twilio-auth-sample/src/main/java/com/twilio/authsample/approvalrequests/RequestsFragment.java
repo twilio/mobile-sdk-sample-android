@@ -22,6 +22,7 @@ import com.twilio.authenticator.TwilioAuthenticator;
 import com.twilio.authenticator.external.ApprovalRequest;
 import com.twilio.authenticator.external.ApprovalRequestStatus;
 import com.twilio.authenticator.external.ApprovalRequests;
+import com.twilio.authenticator.TwilioAuthenticatorTaskCallback;
 import com.twilio.authsample.App;
 import com.twilio.authsample.R;
 import com.twilio.authsample.approvalrequests.adapters.ApprovalRequestsAdapter;
@@ -29,8 +30,6 @@ import com.twilio.authsample.approvalrequests.detail.ApprovalRequestDetailActivi
 import com.twilio.authsample.approvalrequests.events.ApprovalRequestsUpdatedEvent;
 import com.twilio.authsample.approvalrequests.events.RefreshApprovalRequestsEvent;
 import com.twilio.authsample.registration.RegistrationActivity;
-import com.twilio.authsample.utils.AuthyActivityListener;
-import com.twilio.authsample.utils.AuthyTask;
 import com.twilio.authsample.utils.MessageHelper;
 
 import java.util.Arrays;
@@ -41,7 +40,7 @@ import java.util.List;
  * A simple {@link Fragment} subclass.
  */
 public class RequestsFragment extends Fragment implements
-        AuthyActivityListener<ApprovalRequests>,
+        TwilioAuthenticatorTaskCallback<ApprovalRequests>,
         ApprovalRequestsListFragment.ApprovalRequestsSource,
         ApprovalRequestsAdapter.ApprovalRequestSelectedListener {
 
@@ -185,15 +184,8 @@ public class RequestsFragment extends Fragment implements
     private void fetchApprovalRequests() {
         final List<ApprovalRequestStatus> statuses = Arrays.asList(ApprovalRequestStatus.approved, ApprovalRequestStatus.denied, ApprovalRequestStatus.expired, ApprovalRequestStatus.pending);
 
-        new AuthyTask<ApprovalRequests>(this) {
-
-            @Override
-            public ApprovalRequests executeOnBackground() {
-                return twilioAuthenticator.getApprovalRequests(statuses, null);
-            }
-        }.execute();
+        twilioAuthenticator.getApprovalRequests(statuses, null, this);
     }
-
     public ApprovalRequests getApprovalRequests() {
         if (approvalRequests == null) {
             approvalRequests = new ApprovalRequests();

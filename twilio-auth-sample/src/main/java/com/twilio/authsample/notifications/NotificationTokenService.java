@@ -5,15 +5,14 @@ import android.util.Log;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.FirebaseInstanceIdService;
 import com.twilio.authenticator.TwilioAuthenticator;
+import com.twilio.authenticator.TwilioAuthenticatorTaskCallback;
 import com.twilio.authsample.App;
-import com.twilio.authsample.utils.AuthyActivityListener;
-import com.twilio.authsample.utils.AuthyTask;
 
 /**
  * Created by jsuarez on 11/18/16.
  */
 
-public class NotificationTokenService extends FirebaseInstanceIdService implements AuthyActivityListener<Void> {
+public class NotificationTokenService extends FirebaseInstanceIdService implements TwilioAuthenticatorTaskCallback<Void> {
 
     private static final String TAG = NotificationTokenService.class.getSimpleName();
     private TwilioAuthenticator twilioAuthenticator;
@@ -33,13 +32,7 @@ public class NotificationTokenService extends FirebaseInstanceIdService implemen
     }
 
     private void sendPushToken(final String refreshedToken) {
-        new AuthyTask<Void>(this) {
-            @Override
-            public Void executeOnBackground() {
-                twilioAuthenticator.setPushToken(refreshedToken);
-                return null;
-            }
-        }.execute();
+        twilioAuthenticator.setPushToken(refreshedToken, this);
     }
 
     @Override
