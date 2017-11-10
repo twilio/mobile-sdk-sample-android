@@ -124,7 +124,7 @@ public class ApprovalRequestDetailActivity extends AppCompatActivity {
     private void initData() {
         // Show progress bar
         updateProgressBar(true);
-        twilioAuthenticator.getRequest(approvalRequestUUID,
+        twilioAuthenticator.getApprovalRequest(approvalRequestUUID,
                 new TwilioAuthenticatorTaskCallback<ApprovalRequest>() {
             @Override
             public void onSuccess(ApprovalRequest result) {

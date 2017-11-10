@@ -119,7 +119,7 @@ public class MessagingService extends FirebaseMessagingService {
     private void getApprovalRequestFromId(TwilioAuthenticator twilioAuthenticator,
                                           String approvalRequestUuid,
                                           TwilioAuthenticatorTaskCallback<ApprovalRequest> callback) {
-        twilioAuthenticator.getRequest(approvalRequestUuid, callback);
+        twilioAuthenticator.getApprovalRequest(approvalRequestUuid, callback);
     }
 
 }

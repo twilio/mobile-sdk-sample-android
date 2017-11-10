@@ -18,6 +18,7 @@ import java.util.Map;
 public class MockApprovalRequest implements ApprovalRequest {
     private final long expirationTimeStamp;
     private final Map<String, String> details;
+    private final String customerUuid;
     private Date signingTime;
     private Date creationDate;
     private String transactionId;
@@ -25,13 +26,14 @@ public class MockApprovalRequest implements ApprovalRequest {
     private String message;
     private String appId;
 
-    public MockApprovalRequest(String transactionId, ApprovalRequestStatus status, String message, Map<String, String> details, Date creationDate, long expirationTimeStamp) {
+    public MockApprovalRequest(String transactionId, ApprovalRequestStatus status, String message, Map<String, String> details, Date creationDate, long expirationTimeStamp, String customerUuid) {
         this.transactionId = transactionId;
         this.status = status;
         this.message = message;
         this.details = details;
         this.creationDate = creationDate;
         this.expirationTimeStamp = expirationTimeStamp;
+        this.customerUuid = customerUuid;
     }
 
     @Override
@@ -172,8 +174,14 @@ public class MockApprovalRequest implements ApprovalRequest {
         return false;
     }
 
+    @Override
+    public Long getCustomerUuid() {
+        return null;
+    }
+
     public static class Builder {
         private String transactionId;
+        private String customerUuid;
         private ApprovalRequestStatus status;
         private String message = "";
         private Date creationDate = new Date();
@@ -210,8 +218,12 @@ public class MockApprovalRequest implements ApprovalRequest {
             return this;
         }
 
+        public void setCustomerUuid(String customerUuid) {
+            this.customerUuid = customerUuid;
+        }
+
         public MockApprovalRequest createMockApprovalRequest() {
-            return new MockApprovalRequest(transactionId, status, message, details, creationDate, expirationTimeStamp);
+            return new MockApprovalRequest(transactionId, status, message, details, creationDate, expirationTimeStamp, customerUuid);
         }
     }
 }

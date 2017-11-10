@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 
 import com.authy.commonandroid.external.TwilioException;
 import com.twilio.authenticator.TwilioAuthenticator;
+import com.twilio.authenticator.TwilioAuthenticatorTaskCallback;
 import com.twilio.authenticator.external.ApprovalRequest;
 import com.twilio.authenticator.external.ApprovalRequestStatus;
 import com.twilio.authenticator.external.ApprovalRequests;
@@ -23,7 +24,6 @@ public class MockTwilioAuthenticator implements TwilioAuthenticator {
     private boolean registered;
     private boolean errorOnUpdate;
     private ApprovalRequests approvalRequests;
-    private String deviceId = "test_device_id";
     private TOTPs totps;
     private List<AuthenticatorToken> apps;
 
@@ -37,31 +37,45 @@ public class MockTwilioAuthenticator implements TwilioAuthenticator {
     }
 
     @Override
-    public ApprovalRequests getApprovalRequests(List<ApprovalRequestStatus> statusList, TimeInterval timeInterval) {
-        return getApprovalRequests();
+    public void getApprovalRequests(List<ApprovalRequestStatus> statusList,
+                                    TimeInterval timeInterval,
+                                    @NonNull TwilioAuthenticatorTaskCallback<ApprovalRequests> callback) {
+        callback.onSuccess(getApprovalRequests());
     }
 
     @Override
-    public void setPushToken(String pushToken) {
-
+    public void setPushToken(@NonNull String pushToken,
+                @NonNull TwilioAuthenticatorTaskCallback<Void> callback) {
+        callback.onSuccess(null);
     }
 
     @Override
-    public void registerDevice(@NonNull String registrationToken, @Nullable String pushToken, @Nullable String integrationApiKey) {
-        return;
+    public void registerDevice(@NonNull String registrationToken,
+                               @Nullable String pushToken,
+                               @Nullable String integrationApiKey,
+                               @NonNull TwilioAuthenticatorTaskCallback<Void> callback) {
+        callback.onSuccess(null);
     }
 
     @Override
-    public void approveRequest(@NonNull ApprovalRequest approvalRequest) {
+    public void approveRequest(@NonNull ApprovalRequest approvalRequest,
+                               @NonNull TwilioAuthenticatorTaskCallback<Void> callback) {
         if (isErrorOnUpdate()) {
-            throw new TwilioException("errorOnUpdate is true", TwilioException.APPROVAL_REQUEST_ERROR);
+            callback.onError(new TwilioException("errorOnUpdate is true",
+                    TwilioException.APPROVAL_REQUEST_ERROR));
+        } else {
+            callback.onSuccess(null);
         }
     }
 
     @Override
-    public void denyRequest(@NonNull ApprovalRequest approvalRequest) {
+    public void denyRequest(@NonNull ApprovalRequest approvalRequest,
+                            @NonNull TwilioAuthenticatorTaskCallback<Void> callback) {
         if (isErrorOnUpdate()) {
-            throw new TwilioException("errorOnUpdate is true", TwilioException.APPROVAL_REQUEST_ERROR);
+            callback.onError(new TwilioException("errorOnUpdate is true",
+                    TwilioException.APPROVAL_REQUEST_ERROR));
+        } else {
+            callback.onSuccess(null);
         }
     }
 
@@ -81,20 +95,17 @@ public class MockTwilioAuthenticator implements TwilioAuthenticator {
     }
 
     @Override
-    public ApprovalRequest getRequest(String uuid) {
-        return getApprovalRequests().getApprovalRequestById(uuid);
+    public void getApprovalRequest(String uuid,
+                                          @NonNull TwilioAuthenticatorTaskCallback<ApprovalRequest> callback) {
+        callback.onSuccess(getApprovalRequests().getApprovalRequestById(uuid));
     }
 
     @Override
     public String getDeviceId() {
-        return deviceId;
+        return "test_device_id";
     }
 
-    public void setDeviceId(String deviceId) {
-        this.deviceId = deviceId;
-    }
-
-    public boolean isErrorOnUpdate() {
+    private boolean isErrorOnUpdate() {
         return errorOnUpdate;
     }
 
@@ -121,5 +132,9 @@ public class MockTwilioAuthenticator implements TwilioAuthenticator {
     @Override
     public List<AuthenticatorToken> getApps() {
         return this.apps;
+    }
+
+    public void setTotps(TOTPs totps) {
+        this.totps = totps;
     }
 }
