@@ -19,8 +19,6 @@ import com.twilio.authsample.registration.RegistrationActivity;
 import com.twilio.authsample.ui.views.AuthyTimerView;
 import com.twilio.authsample.utils.MessageHelper;
 
-import java.util.Map;
-
 /**
  * A simple {@link Fragment} to display a TOTP code with a timer
  */
@@ -145,7 +143,7 @@ public class TokenDetailsFragment extends Fragment implements TOTPCallback, Toke
     }
 
     private void updateTOTP() {
-        twilioAuthenticator.getTOTP(this);
+        twilioAuthenticator.getTOTPs(this);
         tokenTimer.restart();
     }
 

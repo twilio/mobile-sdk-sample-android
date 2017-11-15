@@ -25,6 +25,6 @@ allprojects {
 
 // Parameters for all modules
 ext.compileSdkVersion = 25
-ext.buildToolsVersion = "26.0.1"
+ext.buildToolsVersion = "26.0.2"
 ext.minSdkVersion = 15
 ext.targetSdkVersion = 25

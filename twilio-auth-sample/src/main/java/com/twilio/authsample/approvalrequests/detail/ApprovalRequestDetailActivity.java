@@ -259,6 +259,7 @@ public class ApprovalRequestDetailActivity extends AppCompatActivity {
             messageHelper.show(buttonBar,
                     operation == Operation.APPROVE ? R.string.approve_success : R.string.deny_success
             ).addCallback(messageDismissedCallback);
+
         }
 
         @Override

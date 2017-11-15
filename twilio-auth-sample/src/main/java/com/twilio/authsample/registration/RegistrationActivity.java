@@ -236,6 +236,7 @@ public class RegistrationActivity extends AppCompatActivity {
     }
 
     private void registerDevice(final String registrationToken, final String integrationApiKey) {
+
         updateProgressDialog(true);
         twilioAuthenticator.registerDevice(registrationToken,
                 FirebaseInstanceId.getInstance().getToken(),

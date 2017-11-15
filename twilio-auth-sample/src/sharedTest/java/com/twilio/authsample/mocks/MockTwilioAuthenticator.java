@@ -85,7 +85,7 @@ public class MockTwilioAuthenticator implements TwilioAuthenticator {
     }
 
     @Override
-    public void getTOTP(TOTPCallback totpCallback) {
+    public void getTOTPs(@NonNull TOTPCallback totpCallback) {
         if (totps == null || totps.isEmpty()) {
             totpCallback.onTOTPError(new Exception("Test exception, invalid TOTP"));
             return;
@@ -95,8 +95,8 @@ public class MockTwilioAuthenticator implements TwilioAuthenticator {
     }
 
     @Override
-    public void getApprovalRequest(String uuid,
-                                          @NonNull TwilioAuthenticatorTaskCallback<ApprovalRequest> callback) {
+    public void getApprovalRequest(@NonNull String uuid,
+                                   @NonNull TwilioAuthenticatorTaskCallback<ApprovalRequest> callback) {
         callback.onSuccess(getApprovalRequests().getApprovalRequestById(uuid));
     }
 
