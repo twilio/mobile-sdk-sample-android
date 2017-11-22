@@ -19,13 +19,12 @@ import android.widget.Toast;
 
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.twilio.authenticator.TwilioAuthenticator;
+import com.twilio.authenticator.TwilioAuthenticatorTaskCallback;
 import com.twilio.authsample.App;
 import com.twilio.authsample.R;
 import com.twilio.authsample.main.MainActivity;
 import com.twilio.authsample.network.SampleApi;
 import com.twilio.authsample.network.model.RegistrationTokenResponse;
-import com.twilio.authsample.utils.AuthyActivityListener;
-import com.twilio.authsample.utils.AuthyTask;
 import com.twilio.authsample.utils.MessageHelper;
 
 import okhttp3.OkHttpClient;
@@ -54,21 +53,6 @@ public class RegistrationActivity extends AppCompatActivity {
     private Call<RegistrationTokenResponse> registrationTokenCall;
 
     private MessageHelper messageHelper;
-
-    private AuthyActivityListener<Void> registerDeviceListener = new AuthyActivityListener<Void>() {
-        @Override
-        public void onSuccess(Void aVoid) {
-            updateProgressDialog(false);
-            startMainActivity();
-        }
-
-        @Override
-        public void onError(Exception exception) {
-            registerDeviceButton.setEnabled(true);
-            updateProgressDialog(false);
-            Toast.makeText(RegistrationActivity.this, R.string.registration_error_verification, Toast.LENGTH_LONG).show();
-        }
-    };
 
     public static void startRegistrationActivity(Activity activity, @StringRes int errorMessageId) {
         Intent registrationIntent = new Intent(activity, RegistrationActivity.class);
@@ -252,14 +236,25 @@ public class RegistrationActivity extends AppCompatActivity {
     }
 
     private void registerDevice(final String registrationToken, final String integrationApiKey) {
+
         updateProgressDialog(true);
-        new AuthyTask<Void>(registerDeviceListener) {
-            @Override
-            public Void executeOnBackground() {
-                twilioAuthenticator.registerDevice(registrationToken, FirebaseInstanceId.getInstance().getToken(), integrationApiKey);
-                return null;
-            }
-        }.execute();
+        twilioAuthenticator.registerDevice(registrationToken,
+                FirebaseInstanceId.getInstance().getToken(),
+                integrationApiKey,
+                new TwilioAuthenticatorTaskCallback<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        updateProgressDialog(false);
+                        startMainActivity();
+                    }
+
+                    @Override
+                    public void onError(Exception exception) {
+                        registerDeviceButton.setEnabled(true);
+                        updateProgressDialog(false);
+                        Toast.makeText(RegistrationActivity.this, R.string.registration_error_verification, Toast.LENGTH_LONG).show();
+                    }
+                });
     }
 }
 

@@ -12,11 +12,11 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 
-import com.authy.commonandroid.external.TwilioException;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.twilio.authenticator.TwilioAuthenticator;
 import com.twilio.authenticator.external.ApprovalRequest;
+import com.twilio.authenticator.TwilioAuthenticatorTaskCallback;
 import com.twilio.authsample.App;
 import com.twilio.authsample.R;
 import com.twilio.authsample.approvalrequests.detail.ApprovalRequestDetailActivity;
@@ -49,7 +49,7 @@ public class MessagingService extends FirebaseMessagingService {
      *
      * @param messageData FCM message body received.
      */
-    private void sendNotification(Map<String, String> messageData) {
+    private void sendNotification(final Map<String, String> messageData) {
 
         // Get the approval request id
         String approvalRequestUuid = messageData.get("approval_request_uuid");
@@ -61,38 +61,49 @@ public class MessagingService extends FirebaseMessagingService {
             return;
         }
 
-        ApprovalRequest approvalRequest = getApprovalRequestFromId(twilioAuthenticator, approvalRequestUuid);
-        if (approvalRequest == null) {
-            Log.d(TAG, "ApprovalRequest not found");
-            return;
-        }
+        getApprovalRequestFromId(twilioAuthenticator, approvalRequestUuid,
+                new TwilioAuthenticatorTaskCallback<ApprovalRequest>() {
+            @Override
+            public void onSuccess(ApprovalRequest approvalRequest) {
+                if (approvalRequest == null) {
+                    Log.d(TAG, "ApprovalRequest not found");
+                    return;
+                }
 
-        // Create task of activities to be opened when user clicks on the notification
-        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-        // Adds the back stack
-        stackBuilder.addParentStack(ApprovalRequestDetailActivity.class);
-        // Adds the ApprovalRequestDetailActivity to the top of the stack
-        Intent intent = ApprovalRequestDetailActivity.createIntent(this, approvalRequest);
-        stackBuilder.addNextIntent(intent);
+                // Create task of activities to be opened when user clicks on the notification
+                TaskStackBuilder stackBuilder = TaskStackBuilder.create(MessagingService.this);
+                // Adds the back stack
+                stackBuilder.addParentStack(ApprovalRequestDetailActivity.class);
+                // Adds the ApprovalRequestDetailActivity to the top of the stack
+                Intent intent = ApprovalRequestDetailActivity.createIntent(MessagingService.this, approvalRequest);
+                stackBuilder.addNextIntent(intent);
 
-        PendingIntent pendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent pendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
-                .setSmallIcon(R.drawable.default_logo)
-                .setContentTitle(getString(R.string.app_name))
-                .setContentText(messageData.get("alert"))
-                .setAutoCancel(true)
-                .setSound(defaultSoundUri)
-                .setContentIntent(pendingIntent);
+                Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(MessagingService.this)
+                        .setSmallIcon(R.drawable.default_logo)
+                        .setContentTitle(getString(R.string.app_name))
+                        .setContentText(messageData.get("alert"))
+                        .setAutoCancel(true)
+                        .setSound(defaultSoundUri)
+                        .setContentIntent(pendingIntent);
 
-        NotificationManager notificationManager =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                NotificationManager notificationManager =
+                        (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-        notificationManager.notify(NEW_REQUEST_NOTIFICATION_ID, notificationBuilder.build());
+                notificationManager.notify(NEW_REQUEST_NOTIFICATION_ID, notificationBuilder.build());
 
-        // Update the main views if visible
-        sendEventToUpdateUI();
+                // Update the main views if visible
+                sendEventToUpdateUI();
+            }
+
+            @Override
+            public void onError(Exception exception) {
+
+            }
+        });
+
     }
 
     private void sendEventToUpdateUI() {
@@ -105,13 +116,10 @@ public class MessagingService extends FirebaseMessagingService {
         });
     }
 
-    private ApprovalRequest getApprovalRequestFromId(TwilioAuthenticator twilioAuthenticator, String approvalRequestUuid) {
-        try {
-
-            return twilioAuthenticator.getRequest(approvalRequestUuid);
-        } catch (TwilioException e) {
-            return null;
-        }
+    private void getApprovalRequestFromId(TwilioAuthenticator twilioAuthenticator,
+                                          String approvalRequestUuid,
+                                          TwilioAuthenticatorTaskCallback<ApprovalRequest> callback) {
+        twilioAuthenticator.getApprovalRequest(approvalRequestUuid, callback);
     }
 
 }
