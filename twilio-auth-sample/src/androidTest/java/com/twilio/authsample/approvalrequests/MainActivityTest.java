@@ -134,6 +134,9 @@ public class MainActivityTest {
 
     @Test
     public void testRequestsViewSelectApprovalRequest() throws Exception {
+        onView(withId(R.id.drawer_layout)).perform(open());
+        onView(withId(R.id.nav_view)).perform(NavigationViewActions.navigateTo(R.id.nav_requests));
+
         // Check initial state with two tabs
         onView(withText(R.string.fragment_approval_requests_pending_title)).check(matches(isDisplayed()));
         onView(withText(R.string.fragment_approval_requests_archive_title)).check(matches(isDisplayed()));
