@@ -45,7 +45,6 @@ public class ApprovalRequestDetailActivityTest {
 
     private MockApprovalRequest.Builder builder;
     private TestApp context;
-    private Activity activity;
     private MockTwilioAuth mockTwilioAuth;
 
     @Before
@@ -58,17 +57,15 @@ public class ApprovalRequestDetailActivityTest {
         builder = new MockApprovalRequest.Builder();
         builder.setMessage(APPROVAL_REQUEST_PENDING_MESSAGE);
         builder.setTransactionId("uuid1");
-        builder.setStatus(ApprovalRequestStatus.pending);
         builder.setCreationDate(new Date());
         HashMap<String, String> details = new HashMap<>();
         details.put(DETAILS_DATE_NAME, DETAILS_DATE_VALUE);
         builder.setDetails(details);
-        Intent requestDetailIntent = ApprovalRequestDetailActivity.createIntent(context, builder.createMockApprovalRequest());
-        activity = Robolectric.buildActivity(ApprovalRequestDetailActivity.class, requestDetailIntent).create().get();
     }
 
     @Test
     public void testDetailInfo() throws Exception {
+        ApprovalRequestDetailActivity activity = getDetailActivityForApprovalRequestStatus(ApprovalRequestStatus.pending);
         // Check activity title
         CharSequence approvalRequestDetailActivityTitle = activity.getString(R.string.title_activity_approval_request_detail);
         Toolbar toolbar = (Toolbar) activity.findViewById(R.id.action_bar);
@@ -76,7 +73,7 @@ public class ApprovalRequestDetailActivityTest {
         assertEquals("Invalid title", approvalRequestDetailActivityTitle, toolbar.getTitle());
 
         // Check request message
-        TextView requestMessage = (TextView) activity.findViewById(R.id.transactionMessage);
+        TextView requestMessage = (TextView) activity.findViewById(R.id.requestMessage);
         assertEquals("Invalid message", APPROVAL_REQUEST_PENDING_MESSAGE, requestMessage.getText().toString());
 
         // Check details are displayed
@@ -99,6 +96,7 @@ public class ApprovalRequestDetailActivityTest {
 
     @Test
     public void testApproveButton() throws Exception {
+        ApprovalRequestDetailActivity activity = getDetailActivityForApprovalRequestStatus(ApprovalRequestStatus.pending);
         View approveButton = activity.findViewById(R.id.approveButton);
         assertNotNull("Button must be present", approveButton);
         assertEquals("Button must be visible", View.VISIBLE, approveButton.getVisibility());
@@ -120,6 +118,7 @@ public class ApprovalRequestDetailActivityTest {
 
     @Test
     public void testDenyButton() throws Exception {
+        ApprovalRequestDetailActivity activity = getDetailActivityForApprovalRequestStatus(ApprovalRequestStatus.pending);
         View denyButton = activity.findViewById(R.id.denyButton);
         assertNotNull("Button must be present", denyButton);
         assertEquals("Button must be visible", View.VISIBLE, denyButton.getVisibility());
@@ -141,9 +140,7 @@ public class ApprovalRequestDetailActivityTest {
 
     @Test
     public void testApprovedRequest() {
-        builder.setStatus(ApprovalRequestStatus.approved);
-        Intent requestDetailIntent = ApprovalRequestDetailActivity.createIntent(context, builder.createMockApprovalRequest());
-        activity = Robolectric.buildActivity(ApprovalRequestDetailActivity.class, requestDetailIntent).create().get();
+        ApprovalRequestDetailActivity activity = getDetailActivityForApprovalRequestStatus(ApprovalRequestStatus.approved);
 
         // Check that buttons are not enabled
         View approveButton = activity.findViewById(R.id.approveButton);
@@ -163,9 +160,7 @@ public class ApprovalRequestDetailActivityTest {
 
     @Test
     public void testDeniedRequest() {
-        builder.setStatus(ApprovalRequestStatus.denied);
-        Intent requestDetailIntent = ApprovalRequestDetailActivity.createIntent(context, builder.createMockApprovalRequest());
-        activity = Robolectric.buildActivity(ApprovalRequestDetailActivity.class, requestDetailIntent).create().get();
+        ApprovalRequestDetailActivity activity = getDetailActivityForApprovalRequestStatus(ApprovalRequestStatus.denied);
 
         // Check that buttons are not enabled
         View approveButton = activity.findViewById(R.id.approveButton);
@@ -185,10 +180,7 @@ public class ApprovalRequestDetailActivityTest {
 
     @Test
     public void testExpiredRequest() {
-        builder.setStatus(ApprovalRequestStatus.expired);
-        builder.setExpirationTimestamp(new Date().getTime());
-        Intent requestDetailIntent = ApprovalRequestDetailActivity.createIntent(context, builder.createMockApprovalRequest());
-        activity = Robolectric.buildActivity(ApprovalRequestDetailActivity.class, requestDetailIntent).create().get();
+        ApprovalRequestDetailActivity activity = getDetailActivityForApprovalRequestStatus(ApprovalRequestStatus.expired);
 
         // Check that buttons are not enabled
         View approveButton = activity.findViewById(R.id.approveButton);
@@ -202,5 +194,13 @@ public class ApprovalRequestDetailActivityTest {
         TextView warning = (TextView) activity.findViewById(R.id.transactionWarning);
         assertTrue("Invalid message", statusMessage.getText().toString().contains(expiredStatusMessage));
         assertEquals("Invalid message", activity.getString(R.string.transaction_not_updatable_warning), warning.getText().toString());
+    }
+
+    private ApprovalRequestDetailActivity getDetailActivityForApprovalRequestStatus(ApprovalRequestStatus status) {
+        builder.setStatus(status);
+        MockApprovalRequest mockApprovalRequest = builder.createMockApprovalRequest();
+        Intent requestDetailIntent = ApprovalRequestDetailActivity.createIntent(context, mockApprovalRequest);
+        mockTwilioAuth.addApprovalRequest(mockApprovalRequest);
+        return Robolectric.buildActivity(ApprovalRequestDetailActivity.class, requestDetailIntent).create().get();
     }
 }
