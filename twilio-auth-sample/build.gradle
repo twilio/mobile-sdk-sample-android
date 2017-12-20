@@ -24,6 +24,7 @@ android {
 
     testOptions {
         unitTests {
+            includeAndroidResources true
             all {
                 jvmArgs '-noverify'
             }
@@ -74,7 +75,7 @@ dependencies {
         exclude module: 'design'
     }
 
-    testCompile "org.robolectric:robolectric:3.4.2"
+    testCompile "org.robolectric:robolectric:3.5.1"
 }
 
 apply plugin: 'com.google.gms.google-services'

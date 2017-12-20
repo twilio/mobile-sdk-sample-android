@@ -45,7 +45,7 @@ public class RegistrationActivityTestNotRegistered {
 
         // Check that all required views are visible
         onView(withId(R.id.form)).perform(closeSoftKeyboard());
-        onView(withId(R.id.authy_id)).check(matches(isDisplayed()));
+        onView(withId(R.id.user_id)).check(matches(isDisplayed()));
         onView(withId(R.id.backend_url)).check(matches(isDisplayed()));
         onView(withId(R.id.registerDeviceButton)).check(matches(isDisplayed()));
         onView(withId(R.id.signupTitle)).check(matches(isDisplayed()));
@@ -54,13 +54,13 @@ public class RegistrationActivityTestNotRegistered {
     @Test
     public void testRegisterDeviceButton() throws Exception {
         // Test wrong authy id input
-        onView(withId(R.id.authy_id)).perform(replaceText(""));
-        onView(withId(R.id.authy_id)).perform(closeSoftKeyboard());
+        onView(withId(R.id.user_id)).perform(replaceText(""));
+        onView(withId(R.id.user_id)).perform(closeSoftKeyboard());
         onView(withId(R.id.registerDeviceButton)).perform(click());
-        onView(withId(R.id.authy_id)).check(matches(hasErrorText(registrationActivityTestRule.getActivity().getString(R.string.registration_error_invalid_field))));
+        onView(withId(R.id.user_id)).check(matches(hasErrorText(registrationActivityTestRule.getActivity().getString(R.string.registration_error_invalid_field))));
 
         // Test valid authy id and wrong url
-        onView(withId(R.id.authy_id)).perform(replaceText("123456"));
+        onView(withId(R.id.user_id)).perform(replaceText("123456"));
         onView(withId(R.id.backend_url)).perform(replaceText("invalid url"));
         onView(withId(R.id.backend_url)).perform(closeSoftKeyboard());
         onView(withId(R.id.registerDeviceButton)).perform(click());

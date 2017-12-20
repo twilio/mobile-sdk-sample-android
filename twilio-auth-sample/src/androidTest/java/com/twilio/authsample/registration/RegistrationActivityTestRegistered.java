@@ -43,7 +43,7 @@ public class RegistrationActivityTestRegistered {
     @Test
     public void testRegistrationFormIsNotDisplayed() throws Exception {
         // Form views should not be visible
-        onView(withId(R.id.authy_id)).check(doesNotExist());
+        onView(withId(R.id.user_id)).check(doesNotExist());
         onView(withId(R.id.backend_url)).check(doesNotExist());
         onView(withId(R.id.registerDeviceButton)).check(doesNotExist());
         onView(withId(R.id.signupTitle)).check(doesNotExist());

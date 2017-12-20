@@ -51,14 +51,14 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/registration_authy_id_label" />
+                    android:text="@string/registration_user_id_label" />
 
                 <EditText
-                    android:id="@+id/authy_id"
+                    android:id="@+id/user_id"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/registration_authy_id_hint"
-                    android:inputType="text|number"
+                    android:hint="@string/registration_user_id_hint"
+                    android:inputType="text|textNoSuggestions"
                     android:textSize="@dimen/registration_form_field_text_size" />
 
                 <TextView

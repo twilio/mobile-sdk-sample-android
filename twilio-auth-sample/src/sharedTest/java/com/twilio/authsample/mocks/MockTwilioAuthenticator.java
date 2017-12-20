@@ -52,7 +52,6 @@ public class MockTwilioAuthenticator implements TwilioAuthenticator {
     @Override
     public void registerDevice(@NonNull String registrationToken,
                                @Nullable String pushToken,
-                               @Nullable String integrationApiKey,
                                @NonNull TwilioAuthenticatorTaskCallback<Void> callback) {
         callback.onSuccess(null);
     }
@@ -103,6 +102,11 @@ public class MockTwilioAuthenticator implements TwilioAuthenticator {
     @Override
     public String getDeviceId() {
         return "test_device_id";
+    }
+
+    @Override
+    public String getAuthyId() {
+        return "test_authy_id";
     }
 
     private boolean isErrorOnUpdate() {
