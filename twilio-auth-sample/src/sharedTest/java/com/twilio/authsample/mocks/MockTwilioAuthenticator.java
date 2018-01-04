@@ -9,12 +9,15 @@ import com.twilio.authenticator.TwilioAuthenticatorTaskCallback;
 import com.twilio.authenticator.external.ApprovalRequest;
 import com.twilio.authenticator.external.ApprovalRequestStatus;
 import com.twilio.authenticator.external.ApprovalRequests;
+import com.twilio.authenticator.external.AuthenticatorObserver;
 import com.twilio.authenticator.external.AuthenticatorToken;
 import com.twilio.authenticator.external.TOTPCallback;
 import com.twilio.authenticator.external.TOTPs;
 import com.twilio.authenticator.external.TimeInterval;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by jsuarez on 5/12/16.
@@ -26,6 +29,8 @@ public class MockTwilioAuthenticator implements TwilioAuthenticator {
     private ApprovalRequests approvalRequests;
     private TOTPs totps;
     private List<AuthenticatorToken> apps;
+    private Set<AuthenticatorObserver> observers = new HashSet<>();
+
 
     public MockTwilioAuthenticator(boolean registered) {
         this.registered = registered;
@@ -91,6 +96,16 @@ public class MockTwilioAuthenticator implements TwilioAuthenticator {
         }
 
         totpCallback.onTOTPReceived(totps);
+    }
+
+    @Override
+    public void addObserver(AuthenticatorObserver observer) {
+        observers.add(observer);
+    }
+
+    @Override
+    public void removeObserver(AuthenticatorObserver observer) {
+        observers.remove(observer);
     }
 
     @Override
