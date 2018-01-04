@@ -16,7 +16,9 @@
     <string name="transaction_logo_content_description">Transaction logo</string>
     <string name="menu_refresh_title">Refresh</string>
     <string name="menu_clear_data">Clear Data</string>
+    <string name="menu_show_ids">IDs</string>
     <string name="dialog_confirm_clear_data">Are you sure you want to clear all local data?</string>
+    <string name="dialog_show_ids">Device ID:%1$s \nAuthy ID:%2$s</string>
     <string name="expires_at_message">Expires at %1$s</string>
     <string name="expired_on_message">Expired on %1$s</string>
     <string name="transaction_expired_title">Expired</string>
@@ -51,8 +53,8 @@
 
     <!-- Registration screen -->
     <string name="registration_title">Device Registration</string>
-    <string name="registration_authy_id_label">Authy ID</string>
-    <string name="registration_authy_id_hint">12345678</string>
+    <string name="registration_user_id_label">User ID</string>
+    <string name="registration_user_id_hint">abcdef12345678</string>
     <string name="registration_backend_url_label">Backend URL</string>
     <string name="registration_backend_url_hint">https required</string>
     <string name="registration_register_device_button_label">REGISTER DEVICE</string>

@@ -44,7 +44,7 @@ public class RegistrationActivity extends AppCompatActivity {
     public static final String EXTRA_ERROR_MESSAGE_ID = "error_message";
     private TwilioAuthenticator twilioAuthenticator;
     private Button registerDeviceButton;
-    private EditText authyId;
+    private EditText userId;
     private EditText backendUrl;
     private View buttonContainer;
 
@@ -110,7 +110,7 @@ public class RegistrationActivity extends AppCompatActivity {
     private void initViews() {
         messageHelper = new MessageHelper();
         registerDeviceButton = (Button) findViewById(R.id.registerDeviceButton);
-        authyId = (EditText) findViewById(R.id.authy_id);
+        userId = (EditText) findViewById(R.id.user_id);
         backendUrl = (EditText) findViewById(R.id.backend_url);
         buttonContainer = findViewById(R.id.buttonContainer);
 
@@ -137,16 +137,16 @@ public class RegistrationActivity extends AppCompatActivity {
         });
     }
 
-    private void onRegisterDeviceButtonClicked() {
+    private void    onRegisterDeviceButtonClicked() {
         hideKeyboard();
-        authyId.setError(null);
+        userId.setError(null);
         backendUrl.setError(null);
 
-        String authyIdString = authyId.getText().toString();
+        String userIdString = userId.getText().toString();
         String backendUrlString = backendUrl.getText().toString();
 
-        if (TextUtils.isEmpty(authyIdString)) {
-            authyId.setError(getString(R.string.registration_error_invalid_field));
+        if (TextUtils.isEmpty(userIdString)) {
+            userId.setError(getString(R.string.registration_error_invalid_field));
             return;
         }
 
@@ -167,7 +167,7 @@ public class RegistrationActivity extends AppCompatActivity {
 
         // Fetch registration token
         registerDeviceButton.setEnabled(false);
-        fetchRegistrationToken(backendUrlString, authyIdString);
+        fetchRegistrationToken(backendUrlString, userIdString);
     }
 
     private void hideKeyboard() {
@@ -181,7 +181,7 @@ public class RegistrationActivity extends AppCompatActivity {
         inputManager.hideSoftInputFromWindow(focusedView.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
     }
 
-    private void fetchRegistrationToken(String backendUrl, final String authyId) {
+    private void fetchRegistrationToken(String backendUrl, final String userId) {
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor).build();
@@ -194,11 +194,11 @@ public class RegistrationActivity extends AppCompatActivity {
 
         final SampleApi sampleApi = retrofit.create(SampleApi.class);
 
-        callGetRegistrationToken(authyId, sampleApi);
+        callGetRegistrationToken(userId, sampleApi);
     }
 
-    private void callGetRegistrationToken(String authyId, SampleApi sampleApi) {
-        registrationTokenCall = sampleApi.getRegistrationToken(authyId);
+    private void callGetRegistrationToken(String userId, SampleApi sampleApi) {
+        registrationTokenCall = sampleApi.getRegistrationToken(userId);
         updateProgressDialog(true);
         registrationTokenCall.enqueue(new Callback<RegistrationTokenResponse>() {
             @Override
@@ -232,15 +232,14 @@ public class RegistrationActivity extends AppCompatActivity {
         }
         RegistrationTokenResponse registrationTokenResponse = response.body();
 
-        registerDevice(registrationTokenResponse.getRegistrationToken(), registrationTokenResponse.getApiKey());
+        registerDevice(registrationTokenResponse.getRegistrationToken());
     }
 
-    private void registerDevice(final String registrationToken, final String integrationApiKey) {
+    private void registerDevice(final String registrationToken) {
 
         updateProgressDialog(true);
         twilioAuthenticator.registerDevice(registrationToken,
                 FirebaseInstanceId.getInstance().getToken(),
-                integrationApiKey,
                 new TwilioAuthenticatorTaskCallback<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {

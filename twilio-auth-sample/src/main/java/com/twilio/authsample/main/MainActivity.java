@@ -16,6 +16,7 @@ import com.twilio.authsample.R;
 import com.twilio.authsample.approvalrequests.RequestsFragment;
 import com.twilio.authsample.registration.RegistrationActivity;
 import com.twilio.authsample.ui.ClearDataConfirmationDialog;
+import com.twilio.authsample.ui.ShowIdsDialog;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, ClearDataConfirmationDialog.OnClearDataConfirmationListener {
@@ -57,6 +58,9 @@ public class MainActivity extends AppCompatActivity
             ClearDataConfirmationDialog clearDataConfirmationDialog = new ClearDataConfirmationDialog();
             clearDataConfirmationDialog.show(getSupportFragmentManager(), ClearDataConfirmationDialog.class.getSimpleName());
             return true;
+        } else if (item.getItemId() == R.id.menu_ids) {
+            ShowIdsDialog showIdsDialog = ShowIdsDialog.create(twilioAuthenticator.getAuthyId(), twilioAuthenticator.getDeviceId());
+            showIdsDialog.show(getSupportFragmentManager(), ShowIdsDialog.class.getSimpleName());
         }
         return super.onOptionsItemSelected(item);
     }

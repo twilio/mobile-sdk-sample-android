@@ -15,5 +15,5 @@ public interface SampleApi {
 
     @POST("registration")
     @FormUrlEncoded
-    Call<RegistrationTokenResponse> getRegistrationToken(@Field("authy_id") String authyId);
+    Call<RegistrationTokenResponse> getRegistrationToken(@Field("user_id") String userId);
 }
