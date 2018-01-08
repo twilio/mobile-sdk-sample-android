@@ -9,7 +9,7 @@ body = """FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'. Check console out
 subject = "FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'"
 
 properties([
-  buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '', numToKeepStr: '5')),
+  buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '', numToKeepStr: '25')),
   pipelineTriggers([
     upstream(
       threshold: 'SUCCESS',
