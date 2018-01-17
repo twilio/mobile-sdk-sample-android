@@ -8,7 +8,7 @@ import android.support.test.runner.AndroidJUnit4;
 
 import com.twilio.authenticator.external.ApprovalRequestStatus;
 import com.twilio.authenticator.external.ApprovalRequests;
-import com.twilio.authenticator.external.AuthenticatorToken;
+import com.twilio.authenticator.external.TOTPs;
 import com.twilio.authsample.R;
 import com.twilio.authsample.main.MainActivity;
 import com.twilio.authsample.matchers.RecyclerViewItemCountAssertion;
@@ -25,8 +25,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 
 import static android.support.test.InstrumentationRegistry.getTargetContext;
@@ -155,7 +153,7 @@ public class MainActivityTest {
     @Test
     public void testEmptyTokensView() throws Exception {
         //Empty app list
-        mockTwilioAuthenticator.setApps(new ArrayList<AuthenticatorToken>());
+        mockTwilioAuthenticator.setTotps(new TOTPs());
 
         // Open navigation menu
         onView(withId(R.id.drawer_layout)).perform(open());
@@ -177,7 +175,10 @@ public class MainActivityTest {
         MockApp app2 = new MockApp("app_2", "Second App");
 
         //Empty app list
-        mockTwilioAuthenticator.setApps(Arrays.<AuthenticatorToken>asList(app1, app2));
+        TOTPs totps = new TOTPs();
+        totps.put(app1.getAppId(), app1);
+        totps.put(app2.getAppId(), app2);
+        mockTwilioAuthenticator.setTotps(totps);
 
         // Open navigation menu
         onView(withId(R.id.drawer_layout)).perform(open());
@@ -187,7 +188,7 @@ public class MainActivityTest {
         CharSequence activityTitle = getTargetContext().getString(R.string.menu_navigation_tokens);
         onView(withId(R.id.toolbar)).check(matches(new ToolbarTitleMatcher(is(activityTitle))));
 
-        // Check that a list with 2 totp is displayed
+        // Check that a list with 2 token is displayed
         onView(withId(R.id.tokens_list)).check(matches(isDisplayed()));
         onView(withId(R.id.tokens_list)).check(new RecyclerViewItemCountAssertion(2));
     }

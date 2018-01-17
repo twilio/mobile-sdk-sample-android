@@ -165,6 +165,10 @@ public class RegistrationActivity extends AppCompatActivity {
             return;
         }
 
+        if (!backendUrlString.endsWith("/")) {
+            backendUrlString = backendUrlString + "/";
+        }
+
         // Fetch registration token
         registerDeviceButton.setEnabled(false);
         fetchRegistrationToken(backendUrlString, userIdString);
