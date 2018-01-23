@@ -90,18 +90,15 @@ public class TokensFragment extends Fragment implements TokensAdapter.OnClickLis
     @Override
     public void onAppAdded(@NonNull AuthenticatorToken app) {
         tokensAdapter.addApp(app);
-        tokensAdapter.notifyDataSetChanged();
     }
 
     @Override
     public void onAppDeleted(@NonNull String appId) {
         tokensAdapter.removeApp(appId);
-        tokensAdapter.notifyDataSetChanged();
     }
 
     @Override
     public void onAppUpdated(@NonNull AuthenticatorToken app) {
         tokensAdapter.updateApp(app);
-        tokensAdapter.notifyDataSetChanged();
     }
 }

@@ -59,6 +59,7 @@ public class TokensAdapter extends RecyclerView.Adapter<TokensAdapter.ViewHolder
 
     public void addApp(AuthenticatorToken authenticatorToken) {
         apps.add(authenticatorToken);
+        notifyDataSetChanged();
     }
 
     public void removeApp(String appId) {
@@ -70,11 +71,13 @@ public class TokensAdapter extends RecyclerView.Adapter<TokensAdapter.ViewHolder
                 break;
             }
         }
+        notifyDataSetChanged();
     }
 
-    public void updateApp(AuthenticatorToken authenticatorToken){
+    public void updateApp(AuthenticatorToken authenticatorToken) {
         removeApp(authenticatorToken.getAppId());
         addApp(authenticatorToken);
+        notifyDataSetChanged();
     }
 
     public void setApps(List<AuthenticatorToken> authenticatorTokens) {
