@@ -9,6 +9,7 @@ import android.widget.TextView;
 import com.twilio.authenticator.external.AuthenticatorToken;
 import com.twilio.authsample.R;
 
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -54,6 +55,33 @@ public class TokensAdapter extends RecyclerView.Adapter<TokensAdapter.ViewHolder
     @Override
     public int getItemCount() {
         return apps == null ? 0 : apps.size();
+    }
+
+    public void addApp(AuthenticatorToken authenticatorToken) {
+        apps.add(authenticatorToken);
+        notifyDataSetChanged();
+    }
+
+    public void removeApp(String appId) {
+        Iterator<AuthenticatorToken> iterator = apps.iterator();
+        while (iterator.hasNext()) {
+            AuthenticatorToken app = iterator.next();
+            if (app.getAppId().equals(appId)) {
+                iterator.remove();
+                break;
+            }
+        }
+        notifyDataSetChanged();
+    }
+
+    public void updateApp(AuthenticatorToken authenticatorToken) {
+        removeApp(authenticatorToken.getAppId());
+        addApp(authenticatorToken);
+        notifyDataSetChanged();
+    }
+
+    public void setApps(List<AuthenticatorToken> authenticatorTokens) {
+        this.apps = authenticatorTokens;
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {

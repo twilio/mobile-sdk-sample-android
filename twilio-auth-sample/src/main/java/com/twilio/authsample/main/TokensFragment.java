@@ -2,6 +2,7 @@ package com.twilio.authsample.main;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -11,17 +12,21 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.twilio.authenticator.TwilioAuthenticator;
+import com.twilio.authenticator.external.AuthenticatorObserver;
 import com.twilio.authenticator.external.AuthenticatorToken;
+import com.twilio.authenticator.external.TOTPs;
 import com.twilio.authsample.R;
 import com.twilio.authsample.totp.TokensAdapter;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by lvidal on 10/12/17.
  */
 
-public class TokensFragment extends Fragment implements TokensAdapter.OnClickListener {
+public class TokensFragment extends Fragment implements TokensAdapter.OnClickListener, AuthenticatorObserver {
     private RecyclerView recyclerView;
     private TwilioAuthenticator twilioAuthenticator;
     private TokensAdapter tokensAdapter;
@@ -46,15 +51,7 @@ public class TokensFragment extends Fragment implements TokensAdapter.OnClickLis
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        List<AuthenticatorToken> apps = twilioAuthenticator.getApps();
-
-        tokensAdapter = new TokensAdapter(apps, this);
+        tokensAdapter = new TokensAdapter(new ArrayList<AuthenticatorToken>(), this);
         recyclerView.setAdapter(tokensAdapter);
     }
 
@@ -65,5 +62,43 @@ public class TokensFragment extends Fragment implements TokensAdapter.OnClickLis
         intent.putExtra(Intent.EXTRA_TITLE, app.getName());
 
         getActivity().startActivity(intent);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        twilioAuthenticator.addObserver(this);
+
+    }
+
+    @Override
+    public void onPause() {
+        twilioAuthenticator.removeObserver(this);
+        super.onPause();
+    }
+
+    @Override
+    public void onTOTPsUpdated(@NonNull TOTPs totps) {
+        Set<String> appIds = totps.keySet();
+        List<AuthenticatorToken> authenticatorTokens = new ArrayList<>();
+        for (String appId : appIds) {
+            authenticatorTokens.add(totps.getTOTP(appId));
+        }
+        tokensAdapter.setApps(authenticatorTokens);
+    }
+
+    @Override
+    public void onAppAdded(@NonNull AuthenticatorToken app) {
+        tokensAdapter.addApp(app);
+    }
+
+    @Override
+    public void onAppDeleted(@NonNull String appId) {
+        tokensAdapter.removeApp(appId);
+    }
+
+    @Override
+    public void onAppUpdated(@NonNull AuthenticatorToken app) {
+        tokensAdapter.updateApp(app);
     }
 }
