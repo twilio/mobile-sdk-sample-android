@@ -21,7 +21,7 @@ public class AppsAdapter extends RecyclerView.Adapter<AppsAdapter.ViewHolder> {
     private final OnClickListener clickListener;
 
     public interface OnClickListener {
-        void onTokenClicked(App app);
+        void onAppClicked(App app);
     }
 
     private List<App> apps;
@@ -47,7 +47,7 @@ public class AppsAdapter extends RecyclerView.Adapter<AppsAdapter.ViewHolder> {
         holder.rootView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                clickListener.onTokenClicked(apps.get(position));
+                clickListener.onAppClicked(apps.get(position));
             }
         });
     }
@@ -66,16 +66,16 @@ public class AppsAdapter extends RecyclerView.Adapter<AppsAdapter.ViewHolder> {
         Iterator<App> iterator = apps.iterator();
         while (iterator.hasNext()) {
             App app = iterator.next();
-            if (app.getId().equals(appId)) {
-                iterator.remove();
-                break;
-            }
+//            if (app.getId().equals(appId)) {
+//                iterator.remove();
+//                break;
+//            }
         }
         notifyDataSetChanged();
     }
 
     public void updateApp(App authenticatorToken) {
-        removeApp(authenticatorToken.getId());
+//        removeApp(authenticatorToken.getId());
         addApp(authenticatorToken);
         notifyDataSetChanged();
     }

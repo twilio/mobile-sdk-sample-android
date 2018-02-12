@@ -1,5 +1,6 @@
 package com.twilio.authenticatorsample.main;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -17,6 +18,7 @@ import com.twilio.authenticatorsample.approvalrequests.RequestsFragment;
 import com.twilio.authenticatorsample.registration.RegistrationActivity;
 import com.twilio.authenticatorsample.ui.ClearDataConfirmationDialog;
 import com.twilio.authenticatorsample.ui.ShowIdsDialog;
+import com.twilio.authenticatorsample.utils.MessageHelper;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, ClearDataConfirmationDialog.OnClearDataConfirmationListener {
@@ -25,6 +27,7 @@ public class MainActivity extends AppCompatActivity
     private DrawerLayout drawer;
     private NavigationView navigationView;
     private Toolbar toolbar;
+    private Long appId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,18 +74,17 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_requests) {
-            RequestsFragment requestsFragment = RequestsFragment.newInstance();
+            RequestsFragment requestsFragment = RequestsFragment.newInstance(appId);
             getSupportFragmentManager()
                     .beginTransaction()
                     .replace(R.id.container, requestsFragment)
                     .commit();
             getSupportActionBar().setTitle(R.string.menu_navigation_requests);
         } else if (id == R.id.nav_tokens) {
-            AppsFragment appsFragment = AppsFragment.newInstance(twilioAuthenticator);
-            appsFragment.setHasOptionsMenu(true);
+            AppDetailFragment appDetailFragment = AppDetailFragment.newInstance(appId);
             getSupportFragmentManager()
                     .beginTransaction()
-                    .replace(R.id.container, appsFragment)
+                    .replace(R.id.container, appDetailFragment)
                     .commit();
             getSupportActionBar().setTitle(R.string.menu_navigation_tokens);
         }
@@ -117,8 +119,9 @@ public class MainActivity extends AppCompatActivity
 
     private void initVars() {
         twilioAuthenticator = ((SampleApp) getApplicationContext()).getTwilioAuthenticator();
-
+        appId = getIntent().getLongExtra(AppsActivity.EXTRA_APP_ID, 0);
         // Select the first item by default
         onNavigationItemSelected(navigationView.getMenu().getItem(0));
     }
+
 }

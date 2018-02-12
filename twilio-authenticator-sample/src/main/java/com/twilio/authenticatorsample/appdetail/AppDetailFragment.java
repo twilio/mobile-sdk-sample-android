@@ -1,12 +1,14 @@
 package com.twilio.authenticatorsample.main;
 
-import android.content.Intent;
+import android.app.ActionBar;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.twilio.authenticator.TwilioAuthenticator;
@@ -33,7 +35,7 @@ public class AppDetailFragment extends Fragment implements TokenTimer.OnTimerLis
         @Override
         public void onDismissed(Snackbar transientBottomBar, int event) {
             super.onDismissed(transientBottomBar, event);
-            finish();
+//            finish();
         }
     };
 
@@ -42,48 +44,68 @@ public class AppDetailFragment extends Fragment implements TokenTimer.OnTimerLis
     private AuthyTimerView authyTimerView;
     private MessageHelper messageHelper;
 
+    public AppDetailFragment() {
+
+    }
+
+    /**
+     * Use this factory method to create a new instance of Requests fragment
+     *
+     * @return A new instance of fragment RequestsFragment.
+     */
+    public static AppDetailFragment newInstance(Long appId) {
+        Bundle args = new Bundle();
+        args.putLong("appId", appId);
+        AppDetailFragment appDetailFragment = new AppDetailFragment();
+        appDetailFragment.setArguments(args);
+        return appDetailFragment;
+    }
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_app_detail);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        twilioAuthenticator = ((SampleApp) getApplicationContext()).getTwilioAuthenticator();
-
+        View rootView = inflater.inflate(R.layout.fragment_app_detail, container, false);
+        initViews(rootView);
         initVars();
-        initViews();
+        return rootView;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        switch (id) {
-            case android.R.id.home:
-                onBackPressed();
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
+    private void initViews(View rootView) {
 
-    private void initViews() {
-        totpView = (TextView) findViewById(R.id.totp);
-        authyTimerView = (AuthyTimerView) findViewById(R.id.timer);
+        totpView = (TextView) rootView.findViewById(R.id.totp);
+        authyTimerView = (AuthyTimerView) rootView.findViewById(R.id.timer);
         authyTimerView.setArcColor(getResources().getColor(R.color.colorAccent));
         authyTimerView.setArcBackgroundColor(getResources().getColor(R.color.lightGrey));
         authyTimerView.setDotColor(getResources().getColor(android.R.color.transparent));
         authyTimerView.setTimerBackgroundColor(getResources().getColor(R.color.background_color));
 
         // Enable the Up button
-        ActionBar actionBar = getSupportActionBar();
+        ActionBar actionBar = getActivity().getActionBar();
         if (actionBar != null) {
             actionBar.setTitle(title);
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
     }
 
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch (id) {
+            case android.R.id.home:
+//                onBackPressed();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+
     private void initVars() {
         messageHelper = new MessageHelper();
-        appId = getIntent().getLongExtra(AppsActivity.EXTRA_APP_ID, 0);
-        title = getIntent().getStringExtra(Intent.EXTRA_TITLE);
+        SampleApp sampleApp = (SampleApp) getActivity().getApplicationContext();
+        twilioAuthenticator = (sampleApp).getTwilioAuthenticator();
+        appId = getArguments().getLong("appId");
+//        title = getIntent().getStringExtra(Intent.EXTRA_TITLE);
     }
 
     @Override
@@ -146,11 +168,11 @@ public class AppDetailFragment extends Fragment implements TokenTimer.OnTimerLis
 
     @Override
     public void onAppDeleted(List<Long> appIds) {
-//        if (this.appId.equals(appId)) {
-//            Snackbar snackbar = messageHelper.show(authyTimerView, "App was deleted");
-//            snackbar.addCallback(appDeletedCallback);
-//            finish();
-//        }
+        if (this.appId.equals(appId)) {
+            Snackbar snackbar = messageHelper.show(authyTimerView, "App was deleted");
+            snackbar.addCallback(appDeletedCallback);
+            getActivity().onBackPressed();
+        }
     }
 
     @Override

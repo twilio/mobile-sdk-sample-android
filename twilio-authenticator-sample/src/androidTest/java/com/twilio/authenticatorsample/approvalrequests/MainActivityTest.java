@@ -10,7 +10,7 @@ import com.twilio.authenticator.external.App;
 import com.twilio.authenticator.external.ApprovalRequestStatus;
 import com.twilio.authenticator.external.ApprovalRequests;
 import com.twilio.authenticatorsample.R;
-import com.twilio.authenticatorsample.main.MainActivity;
+import com.twilio.authenticatorsample.appslist.MainActivity;
 import com.twilio.authenticatorsample.matchers.RecyclerViewItemCountAssertion;
 import com.twilio.authenticatorsample.matchers.RecyclerViewItemMatcher;
 import com.twilio.authenticatorsample.matchers.ToolbarTitleMatcher;

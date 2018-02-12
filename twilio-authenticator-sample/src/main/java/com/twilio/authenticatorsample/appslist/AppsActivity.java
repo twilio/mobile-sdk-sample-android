@@ -2,22 +2,21 @@ package com.twilio.authenticatorsample.main;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.PersistableBundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import com.twilio.authenticator.TwilioAuthenticator;
 import com.twilio.authenticator.external.App;
 import com.twilio.authenticator.external.AuthenticatorObserver;
 import com.twilio.authenticatorsample.R;
+import com.twilio.authenticatorsample.SampleApp;
 import com.twilio.authenticatorsample.totp.AppsAdapter;
+import com.twilio.authenticatorsample.ui.ClearDataConfirmationDialog;
+import com.twilio.authenticatorsample.ui.ShowIdsDialog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,19 +33,19 @@ public class AppsActivity extends AppCompatActivity implements AppsAdapter.OnCli
     private TwilioAuthenticator twilioAuthenticator;
     private AppsAdapter appsAdapter;
 
-    public static AppsFragment newInstance(TwilioAuthenticator twilioAuthenticator) {
-        AppsFragment appsFragment = new AppsFragment();
-        appsFragment.twilioAuthenticator = twilioAuthenticator;
-        return appsFragment;
+    public static AppsActivity newInstance(TwilioAuthenticator twilioAuthenticator) {
+        AppsActivity appsActivity = new AppsActivity();
+        appsActivity.twilioAuthenticator = twilioAuthenticator;
+        return appsActivity;
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_apps);
+        setContentView(R.layout.activity_apps);
         initViews();
+        initVars();
     }
-
 
     private void initViews() {
         this.recyclerView = (RecyclerView) findViewById(R.id.tokens_list);
@@ -56,20 +55,48 @@ public class AppsActivity extends AppCompatActivity implements AppsAdapter.OnCli
         recyclerView.setLayoutManager(layoutManager);
         appsAdapter = new AppsAdapter(new ArrayList<App>(), this);
         recyclerView.setAdapter(appsAdapter);
+
+    }
+
+    private void initVars() {
+        twilioAuthenticator = ((SampleApp) getApplicationContext()).getTwilioAuthenticator();
+    }
+
+    // Menu Options
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_activity_main, menu);
+        return true;
     }
 
     @Override
-    public void onTokenClicked(App app) {
-        Intent intent = new Intent(this, AppDetailActivity.class);
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.menu_clear) {
+            ClearDataConfirmationDialog clearDataConfirmationDialog = new ClearDataConfirmationDialog();
+            clearDataConfirmationDialog.show(getSupportFragmentManager(), ClearDataConfirmationDialog.class.getSimpleName());
+            return true;
+        } else if (item.getItemId() == R.id.menu_ids) {
+            ShowIdsDialog showIdsDialog = ShowIdsDialog.create(twilioAuthenticator.getAuthyId(), twilioAuthenticator.getDeviceId());
+            showIdsDialog.show(getSupportFragmentManager(), ShowIdsDialog.class.getSimpleName());
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    // App Selected
+    @Override
+    public void onAppClicked(App app) {
+        Intent intent = new Intent(this, MainActivity.class);
         intent.putExtra(EXTRA_APP_ID, app.getId());
         intent.putExtra(Intent.EXTRA_TITLE, app.getName());
 
         startActivity(intent);
     }
 
+    // Authenticator Observer
     @Override
-    public void onResume() {
-        super.onResume();
+    public void onStart() {
+        super.onStart();
         twilioAuthenticator.addObserver(this);
 
     }
@@ -104,6 +131,5 @@ public class AppsActivity extends AppCompatActivity implements AppsAdapter.OnCli
     public void onNewCode(List<App> apps) {
         appsAdapter.setApps(apps);
     }
-
 }
 

@@ -22,7 +22,7 @@
         </activity>
 
         <activity
-            android:name=".main.AppsActivity"
+            android:name=".appslist.AppsActivity"
             android:label="@string/title_activity_apps_list"
             android:screenOrientation="portrait">
         </activity>
@@ -30,21 +30,21 @@
         <activity
             android:name=".approvalrequests.detail.ApprovalRequestDetailActivity"
             android:label="@string/title_activity_approval_request_detail"
-            android:parentActivityName=".main.MainActivity"
+            android:parentActivityName=".appslist.MainActivity"
             android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".main.AppsActivity" />
+                android:value=".appslist.AppsActivity" />
         </activity>
 
         <activity
-            android:name=".main.MainActivity"
+            android:name=".appslist.MainActivity"
             android:label="@string/menu_navigation_apps"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".main.AppsActivity" />
+                android:value=".appslist.AppsActivity" />
         </activity>
 
 
