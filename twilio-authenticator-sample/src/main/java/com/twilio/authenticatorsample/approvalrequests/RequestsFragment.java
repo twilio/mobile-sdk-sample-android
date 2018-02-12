@@ -107,7 +107,12 @@ public class RequestsFragment extends Fragment implements
     @Override
     public void onError(Exception exception) {
         Log.e(RequestsFragment.class.getSimpleName(), "Error while getting approval requests for device", exception);
-        String errorMessage = exception instanceof TwilioException ? ((TwilioException) exception).getBody() : getString(R.string.approval_request_fetch_error);
+
+        String errorMessage = getString(R.string.approval_request_fetch_error);
+        if (exception instanceof TwilioException && !((TwilioException) exception).getBody().isEmpty()) {
+            errorMessage = ((TwilioException) exception).getBody();
+        }
+
         final Snackbar snackbar = messageHelper.show(viewPager, errorMessage);
         bus.post(new ApprovalRequestsUpdatedEvent(true));
 
