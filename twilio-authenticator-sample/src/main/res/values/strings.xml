@@ -4,6 +4,9 @@
     <string name="loading_msg">Loading…</string>
     <string name="error_no_connection">Please make sure you have internet connection</string>
 
+    <!-- Apps Activity -->
+    <string name="title_activity_apps_list">Apps</string>
+
     <!-- Main Activity -->
     <string name="menu_navigation_tokens">Tokens</string>
     <string name="menu_navigation_requests">Requests</string>
@@ -38,7 +41,7 @@
 
 
     <!-- Approval Requests Detail -->
-    <string name="title_activity_approval_request_detail">Approval Request</string>
+    <string name="title_activity_approval_request_detail">Approval Requests</string>
     <string name="approve_button_label">APPROVE</string>
     <string name="deny_button_label">DENY</string>
     <string name="deny_failed">Request cannot be denied</string>

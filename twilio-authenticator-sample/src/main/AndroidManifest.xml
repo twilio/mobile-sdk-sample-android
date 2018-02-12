@@ -39,7 +39,7 @@
 
         <activity
             android:name=".appslist.MainActivity"
-            android:label="@string/menu_navigation_apps"
+            android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
