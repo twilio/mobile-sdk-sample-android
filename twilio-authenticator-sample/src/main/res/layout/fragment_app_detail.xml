@@ -9,7 +9,7 @@
     android:gravity="center"
     android:orientation="vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.twilio.authenticatorsample.main.AppDetailActivity">
+    tools:context="com.twilio.authenticatorsample.main.AppDetailFragment">
 
     <TextView
         android:id="@+id/totp"

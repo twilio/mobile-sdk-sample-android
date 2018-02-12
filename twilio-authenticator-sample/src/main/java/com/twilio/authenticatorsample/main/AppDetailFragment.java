@@ -20,14 +20,13 @@ import com.twilio.authenticatorsample.utils.MessageHelper;
 
 import java.util.List;
 
-public class AppDetailActivity extends AppCompatActivity implements TokenTimer.OnTimerListener, AuthenticatorObserver {
+public class AppDetailFragment extends Fragment implements TokenTimer.OnTimerListener, AuthenticatorObserver {
 
-    static final String EXTRA_APP_ID = "APP_ID";
     private static final int TICK_INTERVAL_TIME_MILLIS = 50;
 
     private TwilioAuthenticator twilioAuthenticator;
     private TokenTimer tokenTimer;
-    private String appId;
+    private Long appId;
     private String title;
     private com.twilio.authenticator.external.App currentApp;
     private Snackbar.Callback appDeletedCallback = new Snackbar.Callback() {
@@ -83,7 +82,7 @@ public class AppDetailActivity extends AppCompatActivity implements TokenTimer.O
 
     private void initVars() {
         messageHelper = new MessageHelper();
-        appId = getIntent().getStringExtra(EXTRA_APP_ID);
+        appId = getIntent().getLongExtra(AppsActivity.EXTRA_APP_ID, 0);
         title = getIntent().getStringExtra(Intent.EXTRA_TITLE);
     }
 
@@ -115,15 +114,6 @@ public class AppDetailActivity extends AppCompatActivity implements TokenTimer.O
         super.onStop();
     }
 
-    @Override
-    public void onAppDeleted(@NonNull String appId) {
-        if (this.appId.equals(appId)) {
-            Snackbar snackbar = messageHelper.show(authyTimerView, "App was deleted");
-            snackbar.addCallback(appDeletedCallback);
-            finish();
-        }
-    }
-
     private void updateView(com.twilio.authenticator.external.App app) {
         totpView.setText(app.getCurrentCode());
         getTokenTimer(app.getCodeDurationInSeconds() * 1000).restart();
@@ -140,7 +130,7 @@ public class AppDetailActivity extends AppCompatActivity implements TokenTimer.O
     @Override
     public void onNewCode(@NonNull List<App> apps) {
         for (App app : apps) {
-            if (app.getId().equals(appId)) {
+            if (app.getId() == appId) {
                 currentApp = app;
                 break;
             }
@@ -150,12 +140,26 @@ public class AppDetailActivity extends AppCompatActivity implements TokenTimer.O
     }
 
     @Override
-    public void onAppAdded(@NonNull App app) {
-        // Not needed
+    public void onAppAdded(List<App> apps) {
+
     }
 
     @Override
-    public void onAppUpdated(@NonNull App app) {
-        // Not needed
+    public void onAppDeleted(List<Long> appIds) {
+//        if (this.appId.equals(appId)) {
+//            Snackbar snackbar = messageHelper.show(authyTimerView, "App was deleted");
+//            snackbar.addCallback(appDeletedCallback);
+//            finish();
+//        }
+    }
+
+    @Override
+    public void onError(Exception exception) {
+
+    }
+
+    @Override
+    public void onAppUpdated(List<App> apps) {
+
     }
 }
