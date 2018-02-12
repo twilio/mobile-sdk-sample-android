@@ -1,4 +1,4 @@
-package com.twilio.authenticatorsample.main;
+package com.twilio.authenticatorsample.appdetail;
 
 import android.app.ActionBar;
 import android.os.Bundle;
@@ -15,8 +15,6 @@ import com.twilio.authenticator.TwilioAuthenticator;
 import com.twilio.authenticator.external.App;
 import com.twilio.authenticator.external.AuthenticatorObserver;
 import com.twilio.authenticatorsample.R;
-import com.twilio.authenticatorsample.SampleApp;
-import com.twilio.authenticatorsample.totp.TokenTimer;
 import com.twilio.authenticatorsample.ui.views.AuthyTimerView;
 import com.twilio.authenticatorsample.utils.MessageHelper;
 
@@ -29,13 +27,12 @@ public class AppDetailFragment extends Fragment implements TokenTimer.OnTimerLis
     private TwilioAuthenticator twilioAuthenticator;
     private TokenTimer tokenTimer;
     private Long appId;
-    private String title;
     private com.twilio.authenticator.external.App currentApp;
     private Snackbar.Callback appDeletedCallback = new Snackbar.Callback() {
         @Override
         public void onDismissed(Snackbar transientBottomBar, int event) {
             super.onDismissed(transientBottomBar, event);
-//            finish();
+            getActivity().onBackPressed();
         }
     };
 
@@ -44,21 +41,18 @@ public class AppDetailFragment extends Fragment implements TokenTimer.OnTimerLis
     private AuthyTimerView authyTimerView;
     private MessageHelper messageHelper;
 
-    public AppDetailFragment() {
-
-    }
-
     /**
      * Use this factory method to create a new instance of Requests fragment
      *
      * @return A new instance of fragment RequestsFragment.
      */
-    public static AppDetailFragment newInstance(Long appId) {
-        Bundle args = new Bundle();
-        args.putLong("appId", appId);
+    public static AppDetailFragment newInstance(Long appId, TwilioAuthenticator twilioAuthenticator) {
+
         AppDetailFragment appDetailFragment = new AppDetailFragment();
-        appDetailFragment.setArguments(args);
+        appDetailFragment.twilioAuthenticator = twilioAuthenticator;
+        appDetailFragment.appId = appId;
         return appDetailFragment;
+
     }
 
     @Override
@@ -79,12 +73,6 @@ public class AppDetailFragment extends Fragment implements TokenTimer.OnTimerLis
         authyTimerView.setDotColor(getResources().getColor(android.R.color.transparent));
         authyTimerView.setTimerBackgroundColor(getResources().getColor(R.color.background_color));
 
-        // Enable the Up button
-        ActionBar actionBar = getActivity().getActionBar();
-        if (actionBar != null) {
-            actionBar.setTitle(title);
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
     }
 
 
@@ -93,7 +81,7 @@ public class AppDetailFragment extends Fragment implements TokenTimer.OnTimerLis
         int id = item.getItemId();
         switch (id) {
             case android.R.id.home:
-//                onBackPressed();
+                getActivity().onBackPressed();
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -102,10 +90,6 @@ public class AppDetailFragment extends Fragment implements TokenTimer.OnTimerLis
 
     private void initVars() {
         messageHelper = new MessageHelper();
-        SampleApp sampleApp = (SampleApp) getActivity().getApplicationContext();
-        twilioAuthenticator = (sampleApp).getTwilioAuthenticator();
-        appId = getArguments().getLong("appId");
-//        title = getIntent().getStringExtra(Intent.EXTRA_TITLE);
     }
 
     @Override
