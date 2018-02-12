@@ -22,7 +22,7 @@ import com.twilio.authenticator.TwilioAuthenticator;
 import com.twilio.authenticator.TwilioAuthenticatorTaskCallback;
 import com.twilio.authenticatorsample.R;
 import com.twilio.authenticatorsample.SampleApp;
-import com.twilio.authenticatorsample.main.MainActivity;
+import com.twilio.authenticatorsample.appslist.AppsActivity;
 import com.twilio.authenticatorsample.network.SampleApi;
 import com.twilio.authenticatorsample.network.model.RegistrationTokenResponse;
 import com.twilio.authenticatorsample.utils.MessageHelper;
@@ -91,7 +91,7 @@ public class RegistrationActivity extends AppCompatActivity {
     }
 
     public void startMainActivity() {
-        Intent intent = new Intent(RegistrationActivity.this, MainActivity.class);
+        Intent intent = new Intent(RegistrationActivity.this, AppsActivity.class);
         startActivity(intent);
         finish();
     }

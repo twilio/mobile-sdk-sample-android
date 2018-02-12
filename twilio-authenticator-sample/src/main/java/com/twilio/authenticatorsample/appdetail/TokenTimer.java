@@ -1,4 +1,4 @@
-package com.twilio.authenticatorsample.totp;
+package com.twilio.authenticatorsample.appdetail;
 
 /**
  * A timer utility class that takes a token as input and notifies listeners when the timer is ticking

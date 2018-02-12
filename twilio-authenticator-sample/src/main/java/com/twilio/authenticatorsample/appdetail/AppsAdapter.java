@@ -1,4 +1,4 @@
-package com.twilio.authenticatorsample.totp;
+package com.twilio.authenticatorsample.appdetail;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;

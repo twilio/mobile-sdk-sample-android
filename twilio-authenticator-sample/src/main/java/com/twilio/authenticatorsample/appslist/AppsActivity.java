@@ -1,4 +1,4 @@
-package com.twilio.authenticatorsample.main;
+package com.twilio.authenticatorsample.appslist;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,7 +14,7 @@ import com.twilio.authenticator.external.App;
 import com.twilio.authenticator.external.AuthenticatorObserver;
 import com.twilio.authenticatorsample.R;
 import com.twilio.authenticatorsample.SampleApp;
-import com.twilio.authenticatorsample.totp.AppsAdapter;
+import com.twilio.authenticatorsample.appdetail.AppsAdapter;
 import com.twilio.authenticatorsample.ui.ClearDataConfirmationDialog;
 import com.twilio.authenticatorsample.ui.ShowIdsDialog;
 
