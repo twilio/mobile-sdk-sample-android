@@ -176,17 +176,14 @@ public class RequestsFragment extends Fragment implements
 
     private void initVars() {
         SampleApp sampleApp = (SampleApp) getActivity().getApplicationContext();
-        twilioAuthenticator = (sampleApp).getTwilioAuthenticator();
-
         bus = (sampleApp).getBus();
-
         messageHelper = new MessageHelper();
     }
 
     private void fetchApprovalRequests() {
         final List<ApprovalRequestStatus> statuses = Arrays.asList(ApprovalRequestStatus.approved, ApprovalRequestStatus.denied, ApprovalRequestStatus.expired, ApprovalRequestStatus.pending);
 
-        twilioAuthenticator.getApprovalRequests(statuses, null, this);
+        twilioAuthenticator.getApprovalRequests(appId, statuses, null, this);
     }
     public ApprovalRequests getApprovalRequests() {
         if (approvalRequests == null) {
