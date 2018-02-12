@@ -54,18 +54,20 @@ public class RequestsFragment extends Fragment implements
     private MessageHelper messageHelper;
 
     private ApprovalRequests approvalRequests;
-
-    public RequestsFragment() {
-        // Required empty public constructor
-    }
+    private Long appId;
 
     /**
      * Use this factory method to create a new instance of Requests fragment
      *
      * @return A new instance of fragment RequestsFragment.
      */
-    public static RequestsFragment newInstance() {
-        return new RequestsFragment();
+    public static RequestsFragment newInstance(Long appId, TwilioAuthenticator twilioAuthenticator) {
+
+        RequestsFragment requestsFragment = new RequestsFragment();
+        requestsFragment.appId = appId;
+        requestsFragment.twilioAuthenticator = twilioAuthenticator;
+
+        return requestsFragment;
     }
 
     @Override

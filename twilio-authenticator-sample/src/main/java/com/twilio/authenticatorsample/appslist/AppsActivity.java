@@ -28,6 +28,7 @@ import java.util.List;
 public class AppsActivity extends AppCompatActivity implements AppsAdapter.OnClickListener, AuthenticatorObserver {
 
     static final String EXTRA_APP_ID = "APP_ID";
+    static final String EXTRA_APP_NAME = "APP_NAME";
 
     private RecyclerView recyclerView;
     private TwilioAuthenticator twilioAuthenticator;
@@ -88,7 +89,7 @@ public class AppsActivity extends AppCompatActivity implements AppsAdapter.OnCli
     public void onAppClicked(App app) {
         Intent intent = new Intent(this, MainActivity.class);
         intent.putExtra(EXTRA_APP_ID, app.getId());
-        intent.putExtra(Intent.EXTRA_TITLE, app.getName());
+        intent.putExtra(EXTRA_APP_NAME, app.getName());
 
         startActivity(intent);
     }
