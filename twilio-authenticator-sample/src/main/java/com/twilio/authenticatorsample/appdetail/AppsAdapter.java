@@ -57,31 +57,47 @@ public class AppsAdapter extends RecyclerView.Adapter<AppsAdapter.ViewHolder> {
         return apps == null ? 0 : apps.size();
     }
 
-    public void addApp(App app) {
-        apps.add(app);
-        notifyDataSetChanged();
-    }
-
-    public void removeApp(String appId) {
-        Iterator<App> iterator = apps.iterator();
-        while (iterator.hasNext()) {
-            App app = iterator.next();
-//            if (app.getId().equals(appId)) {
-//                iterator.remove();
-//                break;
-//            }
+    public void addApps(List<App> apps) {
+        for (App app: apps) {
+            apps.add(app);
         }
         notifyDataSetChanged();
     }
 
-    public void updateApp(App authenticatorToken) {
-//        removeApp(authenticatorToken.getId());
-        addApp(authenticatorToken);
+    private void removeApp(Long appId) {
+        Iterator<App> iterator = apps.iterator();
+        while (iterator.hasNext()) {
+            App app = iterator.next();
+            if (app.getId() == appId) {
+                iterator.remove();
+                break;
+            }
+        }
+    }
+
+    public void removeApps(List<Long> appIds) {
+        for (Long appId: appIds) {
+            removeApp(appId);
+        }
+
         notifyDataSetChanged();
+
+    }
+
+    public void updateApps(List<App> apps) {
+
+        for (App app: apps) {
+            removeApp(app.getId());
+            apps.add(app);
+        }
+
+        notifyDataSetChanged();
+
     }
 
     public void setApps(List<App> authenticatorTokens) {
         this.apps = authenticatorTokens;
+        notifyDataSetChanged();
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {

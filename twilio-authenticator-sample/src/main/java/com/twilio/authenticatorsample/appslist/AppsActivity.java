@@ -3,9 +3,11 @@ package com.twilio.authenticatorsample.appslist;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -15,8 +17,10 @@ import com.twilio.authenticator.external.AuthenticatorObserver;
 import com.twilio.authenticatorsample.R;
 import com.twilio.authenticatorsample.SampleApp;
 import com.twilio.authenticatorsample.appdetail.AppsAdapter;
+import com.twilio.authenticatorsample.registration.RegistrationActivity;
 import com.twilio.authenticatorsample.ui.ClearDataConfirmationDialog;
 import com.twilio.authenticatorsample.ui.ShowIdsDialog;
+import com.twilio.authenticatorsample.utils.MessageHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,14 +29,16 @@ import java.util.List;
  * Created by lvidal on 10/12/17.
  */
 
-public class AppsActivity extends AppCompatActivity implements AppsAdapter.OnClickListener, AuthenticatorObserver {
+public class AppsActivity extends AppCompatActivity implements AppsAdapter.OnClickListener, AuthenticatorObserver, ClearDataConfirmationDialog.OnClearDataConfirmationListener {
 
     static final String EXTRA_APP_ID = "APP_ID";
     static final String EXTRA_APP_NAME = "APP_NAME";
 
     private RecyclerView recyclerView;
+    private MessageHelper messageHelper;
     private TwilioAuthenticator twilioAuthenticator;
     private AppsAdapter appsAdapter;
+    private Toolbar toolbar;
 
     public static AppsActivity newInstance(TwilioAuthenticator twilioAuthenticator) {
         AppsActivity appsActivity = new AppsActivity();
@@ -52,6 +58,9 @@ public class AppsActivity extends AppCompatActivity implements AppsAdapter.OnCli
         this.recyclerView = (RecyclerView) findViewById(R.id.tokens_list);
         this.recyclerView.setHasFixedSize(true);
 
+        this.toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         appsAdapter = new AppsAdapter(new ArrayList<App>(), this);
@@ -61,6 +70,7 @@ public class AppsActivity extends AppCompatActivity implements AppsAdapter.OnCli
 
     private void initVars() {
         twilioAuthenticator = ((SampleApp) getApplicationContext()).getTwilioAuthenticator();
+        messageHelper = new MessageHelper();
     }
 
     // Menu Options
@@ -109,28 +119,65 @@ public class AppsActivity extends AppCompatActivity implements AppsAdapter.OnCli
     }
 
     @Override
+    protected void onStop() {
+        messageHelper.dismiss();
+        twilioAuthenticator.removeObserver(this);
+        super.onStop();
+    }
+
+    // Authenticator Observer
+    @Override
     public void onError(Exception exception) {
+        Snackbar snackbar = messageHelper.show(recyclerView, exception.getMessage());
+    }
+
+    @Override
+    public void onAppAdded(final List<App> apps) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                appsAdapter.addApps(apps);
+            }
+        });
 
     }
 
     @Override
-    public void onAppAdded(List<App> apps) {
+    public void onAppUpdated(final List<App> apps) {runOnUiThread(new Runnable() {
+        @Override
+        public void run() {
+
+            appsAdapter.updateApps(apps);
+        }
+        });
+    }
+
+    @Override
+    public void onAppDeleted(final List<Long> appIds) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                appsAdapter.removeApps(appIds);
+
+            }
+        });
 
     }
 
     @Override
-    public void onAppUpdated(List<App> apps) {
-
+    public void onNewCode(final List<App> apps) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                appsAdapter.setApps(apps);
+            }
+        });
     }
 
     @Override
-    public void onAppDeleted(List<Long> appIds) {
-
-    }
-
-    @Override
-    public void onNewCode(List<App> apps) {
-        appsAdapter.setApps(apps);
+    public void onClearDataRequested() {
+        twilioAuthenticator.clearLocalData();
+        RegistrationActivity.startRegistrationActivity(this, R.string.registration_error_device_deleted);
     }
 }
 

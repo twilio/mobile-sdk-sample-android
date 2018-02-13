@@ -24,7 +24,7 @@ public class MockApprovalRequest implements ApprovalRequest {
     private String transactionId;
     private ApprovalRequestStatus status;
     private String message;
-    private String appId;
+    private Long appId;
 
     public MockApprovalRequest(String transactionId, ApprovalRequestStatus status, String message, Map<String, String> details, Date creationDate, long expirationTimeStamp, String customerUuid) {
         this.transactionId = transactionId;
@@ -92,7 +92,12 @@ public class MockApprovalRequest implements ApprovalRequest {
     }
 
     @Override
-    public String getAppId() {
+    public String getAppUuid() {
+        return transactionId;
+    }
+
+    @Override
+    public Long getAppId() {
         return appId;
     }
 
@@ -172,11 +177,6 @@ public class MockApprovalRequest implements ApprovalRequest {
     @Override
     public boolean isExpired() {
         return false;
-    }
-
-    @Override
-    public Long getCustomerUuid() {
-        return null;
     }
 
     public static class Builder {

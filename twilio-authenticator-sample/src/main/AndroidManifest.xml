@@ -24,6 +24,7 @@
         <activity
             android:name=".appslist.AppsActivity"
             android:label="@string/title_activity_apps_list"
+            android:theme="@style/AppTheme.NoActionBar"
             android:screenOrientation="portrait">
         </activity>
 

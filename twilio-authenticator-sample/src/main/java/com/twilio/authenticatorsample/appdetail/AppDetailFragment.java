@@ -142,7 +142,9 @@ public class AppDetailFragment extends Fragment implements TokenTimer.OnTimerLis
             }
         }
 
-        updateView(currentApp);
+        if (currentApp != null) {
+            updateView(currentApp);
+        }
     }
 
     @Override
@@ -161,11 +163,12 @@ public class AppDetailFragment extends Fragment implements TokenTimer.OnTimerLis
 
     @Override
     public void onError(Exception exception) {
+        Snackbar snackbar = messageHelper.show(authyTimerView, exception.getMessage());
 
     }
 
     @Override
     public void onAppUpdated(List<App> apps) {
-
+        // Useful if we are displaying the name of the app
     }
 }

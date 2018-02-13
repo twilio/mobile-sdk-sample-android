@@ -80,14 +80,14 @@ public class MainActivity extends AppCompatActivity
                     .beginTransaction()
                     .replace(R.id.container, requestsFragment)
                     .commit();
-            getSupportActionBar().setTitle(appName + " " + R.string.menu_navigation_requests);
+            getSupportActionBar().setTitle(appName + " " + getString(R.string.menu_navigation_requests));
         } else if (id == R.id.nav_tokens) {
             AppDetailFragment appDetailFragment = AppDetailFragment.newInstance(appId, twilioAuthenticator);
             getSupportFragmentManager()
                     .beginTransaction()
                     .replace(R.id.container, appDetailFragment)
                     .commit();
-            getSupportActionBar().setTitle(appName + " " + R.string.menu_navigation_tokens);
+            getSupportActionBar().setTitle(appName + " " + getString(R.string.menu_navigation_tokens));
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

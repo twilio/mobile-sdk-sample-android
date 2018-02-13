@@ -8,20 +8,20 @@ import com.twilio.authenticator.external.App;
 
 public class MockApp implements App {
     private String name;
-    private String appId;
+    private long appId;
 
-    public MockApp(String appId, String name) {
+    public MockApp(long appId, String name) {
         this.appId = appId;
         this.name = name;
     }
 
 
     @Override
-    public String getId() {
+    public long getId() {
         return appId;
     }
 
-    public void setAppId(String appId) {
+    public void setAppId(long appId) {
         this.appId = appId;
     }
 

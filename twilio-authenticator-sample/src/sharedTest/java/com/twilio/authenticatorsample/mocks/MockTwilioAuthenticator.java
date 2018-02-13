@@ -39,7 +39,8 @@ public class MockTwilioAuthenticator implements TwilioAuthenticator {
     }
 
     @Override
-    public void getApprovalRequests(List<ApprovalRequestStatus> statusList,
+    public void getApprovalRequests(@Nullable final Long appId,
+                                    List<ApprovalRequestStatus> statusList,
                                     TimeInterval timeInterval,
                                     @NonNull TwilioAuthenticatorTaskCallback<ApprovalRequests> callback) {
         callback.onSuccess(getApprovalRequests());
@@ -140,5 +141,6 @@ public class MockTwilioAuthenticator implements TwilioAuthenticator {
 
     public void setApps(List<App> apps) {
         this.apps = apps;
+        notifyObservers();
     }
 }
