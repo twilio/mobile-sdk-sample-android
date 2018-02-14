@@ -68,12 +68,8 @@ public class AppsActivityTest {
         //Empty app list
         mockTwilioAuthenticator.setApps(new ArrayList<App>());
 
-        // Open navigation menu
-        onView(withId(R.id.drawer_layout)).perform(open());
-        onView(withId(R.id.nav_view)).perform(NavigationViewActions.navigateTo(R.id.nav_tokens));
-
         // Check that the correct title is used
-        CharSequence activityTitle = getTargetContext().getString(R.string.menu_navigation_tokens);
+        CharSequence activityTitle = getTargetContext().getString(R.string.title_activity_apps_list);
         onView(withId(R.id.toolbar)).check(matches(new ToolbarTitleMatcher(is(activityTitle))));
 
         // Check that an empty token list is displayed

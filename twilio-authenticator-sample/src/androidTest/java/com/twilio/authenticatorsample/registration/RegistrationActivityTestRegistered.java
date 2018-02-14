@@ -51,7 +51,7 @@ public class RegistrationActivityTestRegistered {
     @Test
     public void testApprovalRequestListActivityTransition() throws Exception {
         // Check that the MainActivity is launched
-        CharSequence mainActivityTitle = getTargetContext().getString(R.string.menu_navigation_requests);
+        CharSequence mainActivityTitle = getTargetContext().getString(R.string.title_activity_apps_list);
         onView(withId(R.id.toolbar)).check(matches(new ToolbarTitleMatcher(is(mainActivityTitle))));
 
     }
