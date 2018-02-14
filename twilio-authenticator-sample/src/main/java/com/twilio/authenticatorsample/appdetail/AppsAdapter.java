@@ -58,9 +58,7 @@ public class AppsAdapter extends RecyclerView.Adapter<AppsAdapter.ViewHolder> {
     }
 
     public void addApps(List<App> apps) {
-        for (App app: apps) {
-            apps.add(app);
-        }
+        this.apps.addAll(apps);
         notifyDataSetChanged();
     }
 

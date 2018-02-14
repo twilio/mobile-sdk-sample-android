@@ -105,17 +105,21 @@ public class AppDetailFragment extends Fragment implements TokenTimer.OnTimerLis
         }
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        twilioAuthenticator.addObserver(this);
+    }
 
     @Override
-    public void onStart() {
-        super.onStart();
-        twilioAuthenticator.addObserver(this);
+    public void onPause() {
+        twilioAuthenticator.removeObserver(this);
+        super.onPause();
     }
 
     @Override
     public void onStop() {
         messageHelper.dismiss();
-        twilioAuthenticator.removeObserver(this);
         messageHelper.removeCallback(appDeletedCallback);
         super.onStop();
     }
@@ -153,12 +157,16 @@ public class AppDetailFragment extends Fragment implements TokenTimer.OnTimerLis
     }
 
     @Override
-    public void onAppDeleted(List<Long> appIds) {
-        if (this.appId.equals(appId)) {
-            Snackbar snackbar = messageHelper.show(authyTimerView, "App was deleted");
-            snackbar.addCallback(appDeletedCallback);
-            getActivity().onBackPressed();
-        }
+    public void onAppDeleted(final List<Long> appIds) {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (appIds.contains(appId)) {
+                    Snackbar snackbar = messageHelper.show(authyTimerView, "App was deleted");
+                    snackbar.addCallback(appDeletedCallback);
+                }
+            }
+        });
     }
 
     @Override

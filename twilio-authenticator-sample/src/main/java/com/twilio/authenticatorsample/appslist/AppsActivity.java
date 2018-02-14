@@ -106,14 +106,13 @@ public class AppsActivity extends AppCompatActivity implements AppsAdapter.OnCli
 
     // Authenticator Observer
     @Override
-    public void onStart() {
-        super.onStart();
+    protected void onResume() {
+        super.onResume();
         twilioAuthenticator.addObserver(this);
-
     }
 
     @Override
-    public void onPause() {
+    protected void onPause() {
         twilioAuthenticator.removeObserver(this);
         super.onPause();
     }
@@ -121,7 +120,6 @@ public class AppsActivity extends AppCompatActivity implements AppsAdapter.OnCli
     @Override
     protected void onStop() {
         messageHelper.dismiss();
-        twilioAuthenticator.removeObserver(this);
         super.onStop();
     }
 
