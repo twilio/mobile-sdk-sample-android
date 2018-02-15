@@ -65,6 +65,9 @@ public class RequestsFragment extends Fragment implements
 
         RequestsFragment requestsFragment = new RequestsFragment();
         requestsFragment.appId = appId;
+        Bundle args = new Bundle();
+        args.putLong("appId", appId);
+
         requestsFragment.twilioAuthenticator = twilioAuthenticator;
 
         return requestsFragment;

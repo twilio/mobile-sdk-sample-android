@@ -1,6 +1,5 @@
 package com.twilio.authenticatorsample.appdetail;
 
-import android.app.ActionBar;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -13,14 +12,14 @@ import android.widget.TextView;
 
 import com.twilio.authenticator.TwilioAuthenticator;
 import com.twilio.authenticator.external.App;
-import com.twilio.authenticator.external.AuthenticatorObserver;
+import com.twilio.authenticator.external.MultiAppListener;
 import com.twilio.authenticatorsample.R;
 import com.twilio.authenticatorsample.ui.views.AuthyTimerView;
 import com.twilio.authenticatorsample.utils.MessageHelper;
 
 import java.util.List;
 
-public class AppDetailFragment extends Fragment implements TokenTimer.OnTimerListener, AuthenticatorObserver {
+public class AppDetailFragment extends Fragment implements TokenTimer.OnTimerListener, MultiAppListener {
 
     private static final int TICK_INTERVAL_TIME_MILLIS = 50;
 
@@ -108,13 +107,7 @@ public class AppDetailFragment extends Fragment implements TokenTimer.OnTimerLis
     @Override
     public void onResume() {
         super.onResume();
-        twilioAuthenticator.addObserver(this);
-    }
-
-    @Override
-    public void onPause() {
-        twilioAuthenticator.removeObserver(this);
-        super.onPause();
+        twilioAuthenticator.setMultiAppListener(this);
     }
 
     @Override
