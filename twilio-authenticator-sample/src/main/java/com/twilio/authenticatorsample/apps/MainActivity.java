@@ -1,4 +1,4 @@
-package com.twilio.authenticatorsample.appslist;
+package com.twilio.authenticatorsample.apps;
 
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -11,12 +11,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.twilio.authenticator.TwilioAuthenticator;
-import com.twilio.authenticator.external.App;
 import com.twilio.authenticatorsample.R;
 import com.twilio.authenticatorsample.SampleApp;
+import com.twilio.authenticatorsample.appdetail.AppDetailFragment;
 import com.twilio.authenticatorsample.approvalrequests.RequestsFragment;
 import com.twilio.authenticatorsample.registration.RegistrationActivity;
-import com.twilio.authenticatorsample.appdetail.AppDetailFragment;
 import com.twilio.authenticatorsample.ui.ClearDataConfirmationDialog;
 import com.twilio.authenticatorsample.ui.ShowIdsDialog;
 
@@ -75,14 +74,14 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_requests) {
-            RequestsFragment requestsFragment = RequestsFragment.newInstance(appId, twilioAuthenticator);
+            RequestsFragment requestsFragment = RequestsFragment.newInstance(appId);
             getSupportFragmentManager()
                     .beginTransaction()
                     .replace(R.id.container, requestsFragment)
                     .commit();
             getSupportActionBar().setTitle(appName + " " + getString(R.string.menu_navigation_requests));
         } else if (id == R.id.nav_tokens) {
-            AppDetailFragment appDetailFragment = AppDetailFragment.newInstance(appId, twilioAuthenticator);
+            AppDetailFragment appDetailFragment = AppDetailFragment.newInstance(appId);
             getSupportFragmentManager()
                     .beginTransaction()
                     .replace(R.id.container, appDetailFragment)

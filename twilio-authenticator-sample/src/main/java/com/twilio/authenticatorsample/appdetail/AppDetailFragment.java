@@ -14,6 +14,8 @@ import com.twilio.authenticator.TwilioAuthenticator;
 import com.twilio.authenticator.external.App;
 import com.twilio.authenticator.external.MultiAppListener;
 import com.twilio.authenticatorsample.R;
+import com.twilio.authenticatorsample.SampleApp;
+import com.twilio.authenticatorsample.apps.AppsActivity;
 import com.twilio.authenticatorsample.ui.views.AuthyTimerView;
 import com.twilio.authenticatorsample.utils.MessageHelper;
 
@@ -45,17 +47,17 @@ public class AppDetailFragment extends Fragment implements TokenTimer.OnTimerLis
      *
      * @return A new instance of fragment RequestsFragment.
      */
-    public static AppDetailFragment newInstance(Long appId, TwilioAuthenticator twilioAuthenticator) {
-
+    public static AppDetailFragment newInstance(Long appId) {
         AppDetailFragment appDetailFragment = new AppDetailFragment();
-        appDetailFragment.twilioAuthenticator = twilioAuthenticator;
-        appDetailFragment.appId = appId;
+        Bundle args = new Bundle();
+        args.putLong(AppsActivity.EXTRA_APP_ID, appId);
+        appDetailFragment.setArguments(args);
         return appDetailFragment;
 
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_app_detail, container, false);
         initViews(rootView);
@@ -88,6 +90,8 @@ public class AppDetailFragment extends Fragment implements TokenTimer.OnTimerLis
 
 
     private void initVars() {
+        appId = getArguments().getLong(AppsActivity.EXTRA_APP_ID);
+        twilioAuthenticator = ((SampleApp) getActivity().getApplicationContext()).getTwilioAuthenticator();
         messageHelper = new MessageHelper();
     }
 
@@ -151,15 +155,10 @@ public class AppDetailFragment extends Fragment implements TokenTimer.OnTimerLis
 
     @Override
     public void onAppDeleted(final List<Long> appIds) {
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (appIds.contains(appId)) {
-                    Snackbar snackbar = messageHelper.show(authyTimerView, "App was deleted");
-                    snackbar.addCallback(appDeletedCallback);
-                }
-            }
-        });
+        if (appIds.contains(appId)) {
+            Snackbar snackbar = messageHelper.show(authyTimerView, "App was deleted");
+            snackbar.addCallback(appDeletedCallback);
+        }
     }
 
     @Override

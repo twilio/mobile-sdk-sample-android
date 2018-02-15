@@ -1,21 +1,14 @@
-package com.twilio.authenticatorsample.appslist;
+package com.twilio.authenticatorsample.apps;
 
 import android.content.Intent;
-import android.support.test.espresso.contrib.NavigationViewActions;
-import android.support.test.espresso.contrib.RecyclerViewActions;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.twilio.authenticator.external.App;
-import com.twilio.authenticator.external.ApprovalRequestStatus;
-import com.twilio.authenticator.external.ApprovalRequests;
 import com.twilio.authenticatorsample.R;
 import com.twilio.authenticatorsample.matchers.RecyclerViewItemCountAssertion;
-import com.twilio.authenticatorsample.matchers.RecyclerViewItemMatcher;
 import com.twilio.authenticatorsample.matchers.ToolbarTitleMatcher;
 import com.twilio.authenticatorsample.mocks.MockApp;
-import com.twilio.authenticatorsample.mocks.MockApprovalRequest;
-import com.twilio.authenticatorsample.mocks.MockApprovalRequests;
 import com.twilio.authenticatorsample.mocks.MockTwilioAuthenticator;
 import com.twilio.authenticatorsample.mocks.TestSampleApp;
 
@@ -25,20 +18,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import static android.support.test.InstrumentationRegistry.getTargetContext;
 import static android.support.test.espresso.Espresso.onView;
-import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
-import static android.support.test.espresso.contrib.DrawerActions.open;
-import static android.support.test.espresso.contrib.RecyclerViewActions.scrollToPosition;
-import static android.support.test.espresso.matcher.ViewMatchers.hasDescendant;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
-import static android.support.test.espresso.matcher.ViewMatchers.withText;
-import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.is;
 
 /**
