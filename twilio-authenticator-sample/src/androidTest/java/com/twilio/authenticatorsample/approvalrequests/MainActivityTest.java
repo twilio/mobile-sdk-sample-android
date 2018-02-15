@@ -9,7 +9,7 @@ import android.support.test.runner.AndroidJUnit4;
 import com.twilio.authenticator.external.ApprovalRequestStatus;
 import com.twilio.authenticator.external.ApprovalRequests;
 import com.twilio.authenticatorsample.R;
-import com.twilio.authenticatorsample.appslist.MainActivity;
+import com.twilio.authenticatorsample.apps.MainActivity;
 import com.twilio.authenticatorsample.matchers.RecyclerViewItemCountAssertion;
 import com.twilio.authenticatorsample.matchers.RecyclerViewItemMatcher;
 import com.twilio.authenticatorsample.matchers.ToolbarTitleMatcher;
@@ -36,7 +36,6 @@ import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.is;
 
 /**

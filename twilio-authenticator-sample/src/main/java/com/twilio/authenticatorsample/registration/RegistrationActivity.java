@@ -22,7 +22,7 @@ import com.twilio.authenticator.TwilioAuthenticator;
 import com.twilio.authenticator.TwilioAuthenticatorTaskCallback;
 import com.twilio.authenticatorsample.R;
 import com.twilio.authenticatorsample.SampleApp;
-import com.twilio.authenticatorsample.appslist.AppsActivity;
+import com.twilio.authenticatorsample.apps.AppsActivity;
 import com.twilio.authenticatorsample.network.SampleApi;
 import com.twilio.authenticatorsample.network.model.RegistrationTokenResponse;
 import com.twilio.authenticatorsample.utils.MessageHelper;

@@ -29,6 +29,7 @@ import com.twilio.authenticatorsample.approvalrequests.adapters.ApprovalRequests
 import com.twilio.authenticatorsample.approvalrequests.detail.ApprovalRequestDetailActivity;
 import com.twilio.authenticatorsample.approvalrequests.events.ApprovalRequestsUpdatedEvent;
 import com.twilio.authenticatorsample.approvalrequests.events.RefreshApprovalRequestsEvent;
+import com.twilio.authenticatorsample.apps.AppsActivity;
 import com.twilio.authenticatorsample.registration.RegistrationActivity;
 import com.twilio.authenticatorsample.utils.MessageHelper;
 
@@ -61,12 +62,11 @@ public class RequestsFragment extends Fragment implements
      *
      * @return A new instance of fragment RequestsFragment.
      */
-    public static RequestsFragment newInstance(Long appId, TwilioAuthenticator twilioAuthenticator) {
-
+    public static RequestsFragment newInstance(Long appId) {
         RequestsFragment requestsFragment = new RequestsFragment();
-        requestsFragment.appId = appId;
-        requestsFragment.twilioAuthenticator = twilioAuthenticator;
-
+        Bundle args = new Bundle();
+        args.putLong(AppsActivity.EXTRA_APP_ID, appId);
+        requestsFragment.setArguments(args);
         return requestsFragment;
     }
 
@@ -183,6 +183,8 @@ public class RequestsFragment extends Fragment implements
         SampleApp sampleApp = (SampleApp) getActivity().getApplicationContext();
         bus = (sampleApp).getBus();
         messageHelper = new MessageHelper();
+        twilioAuthenticator = sampleApp.getTwilioAuthenticator();
+        appId = getArguments().getLong(AppsActivity.EXTRA_APP_ID);
     }
 
     private void fetchApprovalRequests() {
