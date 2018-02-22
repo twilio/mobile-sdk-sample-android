@@ -13,7 +13,7 @@ import android.view.MenuItem;
 
 import com.twilio.authenticator.TwilioAuthenticator;
 import com.twilio.authenticator.external.App;
-import com.twilio.authenticator.external.AuthenticatorObserver;
+import com.twilio.authenticator.external.MultiAppListener;
 import com.twilio.authenticatorsample.R;
 import com.twilio.authenticatorsample.SampleApp;
 import com.twilio.authenticatorsample.appdetail.AppsAdapter;
@@ -29,7 +29,7 @@ import java.util.List;
  * Created by lvidal on 10/12/17.
  */
 
-public class AppsActivity extends AppCompatActivity implements AppsAdapter.OnClickListener, AuthenticatorObserver, ClearDataConfirmationDialog.OnClearDataConfirmationListener {
+public class AppsActivity extends AppCompatActivity implements AppsAdapter.OnClickListener, MultiAppListener, ClearDataConfirmationDialog.OnClearDataConfirmationListener {
 
     public static final String EXTRA_APP_ID = "APP_ID";
     static final String EXTRA_APP_NAME = "APP_NAME";
@@ -102,13 +102,7 @@ public class AppsActivity extends AppCompatActivity implements AppsAdapter.OnCli
     @Override
     protected void onResume() {
         super.onResume();
-        twilioAuthenticator.addObserver(this);
-    }
-
-    @Override
-    protected void onPause() {
-        twilioAuthenticator.removeObserver(this);
-        super.onPause();
+        twilioAuthenticator.setMultiAppListener(this);
     }
 
     @Override
@@ -125,46 +119,23 @@ public class AppsActivity extends AppCompatActivity implements AppsAdapter.OnCli
 
     @Override
     public void onAppAdded(final List<App> apps) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                appsAdapter.addApps(apps);
-            }
-        });
-
+        appsAdapter.addApps(apps);
     }
 
     @Override
     public void onAppUpdated(final List<App> apps) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-
-                appsAdapter.updateApps(apps);
-            }
-        });
+        appsAdapter.updateApps(apps);
     }
 
     @Override
     public void onAppDeleted(final List<Long> appIds) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                appsAdapter.removeApps(appIds);
-
-            }
-        });
+        appsAdapter.removeApps(appIds);
 
     }
 
     @Override
     public void onNewCode(final List<App> apps) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                appsAdapter.setApps(apps);
-            }
-        });
+        appsAdapter.setApps(apps);
     }
 
     @Override

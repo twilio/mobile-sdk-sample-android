@@ -52,7 +52,12 @@ public class AppsActivityTest {
     @Test
     public void testEmptyTokensView() throws Exception {
         //Empty app list
-        mockTwilioAuthenticator.setApps(new ArrayList<App>());
+        appsActivityTestRule.getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mockTwilioAuthenticator.setApps(new ArrayList<App>());
+            }
+        });
 
         // Check that the correct title is used
         CharSequence activityTitle = getTargetContext().getString(R.string.title_activity_apps_list);
@@ -70,10 +75,15 @@ public class AppsActivityTest {
         MockApp app2 = new MockApp(2L, "Second App");
 
         //Empty app list
-        List<App> apps = new ArrayList<>();
+        final List<App> apps = new ArrayList<>();
         apps.add(app1);
         apps.add(app2);
-        mockTwilioAuthenticator.setApps(apps);
+        appsActivityTestRule.getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mockTwilioAuthenticator.setApps(apps);
+            }
+        });
 
         // Check that the correct title is used
         CharSequence activityTitle = getTargetContext().getString(R.string.title_activity_apps_list);

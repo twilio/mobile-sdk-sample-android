@@ -10,12 +10,11 @@ import com.twilio.authenticator.external.App;
 import com.twilio.authenticator.external.ApprovalRequest;
 import com.twilio.authenticator.external.ApprovalRequestStatus;
 import com.twilio.authenticator.external.ApprovalRequests;
-import com.twilio.authenticator.external.AuthenticatorObserver;
+import com.twilio.authenticator.external.MultiAppListener;
+import com.twilio.authenticator.external.SingleAppListener;
 import com.twilio.authenticator.external.TimeInterval;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Created by jsuarez on 5/12/16.
@@ -26,7 +25,8 @@ public class MockTwilioAuthenticator implements TwilioAuthenticator {
     private boolean errorOnUpdate;
     private ApprovalRequests approvalRequests;
     private List<App> apps;
-    private Set<AuthenticatorObserver> observers = new HashSet<>();
+    private MultiAppListener multiAppListener;
+    private SingleAppListener singleAppListener ;
 
 
     public MockTwilioAuthenticator(boolean registered) {
@@ -87,21 +87,32 @@ public class MockTwilioAuthenticator implements TwilioAuthenticator {
     }
 
     @Override
-    public void addObserver(AuthenticatorObserver observer) {
-        observers.add(observer);
-        notifyObservers();
-    }
-
-    private void notifyObservers() {
-        for(AuthenticatorObserver observer : observers) {
-            observer.onNewCode(apps);
-        }
+    public void setMultiAppListener(@NonNull MultiAppListener multiAppListener) {
+        this.multiAppListener = multiAppListener;
+        notifyListener();
     }
 
     @Override
-    public void removeObserver(AuthenticatorObserver observer) {
-        observers.remove(observer);
+    public void setSingleAppListener(@NonNull SingleAppListener singleAppListener) {
+        this.singleAppListener = singleAppListener;
+        notifyListener();
     }
+
+
+    private void notifyListener() {
+        if (apps == null || apps.size() == 0) {
+            return;
+        }
+
+        if (multiAppListener != null) {
+            multiAppListener.onNewCode(apps);
+        }
+
+        if (singleAppListener != null) {
+            singleAppListener.onNewCode(apps.get(0));
+        }
+    }
+
 
     @Override
     public void getApprovalRequest(@NonNull String uuid,
@@ -141,6 +152,6 @@ public class MockTwilioAuthenticator implements TwilioAuthenticator {
 
     public void setApps(List<App> apps) {
         this.apps = apps;
-        notifyObservers();
+        notifyListener();
     }
 }
