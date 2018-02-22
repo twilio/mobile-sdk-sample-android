@@ -20,20 +20,34 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
-            android:name=".main.MainActivity"
-            android:label="@string/menu_navigation_requests"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:name=".apps.AppsActivity"
+            android:label="@string/title_activity_apps_list"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait">
+        </activity>
+
         <activity
             android:name=".approvalrequests.detail.ApprovalRequestDetailActivity"
             android:label="@string/title_activity_approval_request_detail"
-            android:parentActivityName=".main.MainActivity"
+            android:parentActivityName=".apps.MainActivity"
             android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".main.MainActivity" />
+                android:value=".apps.AppsActivity" />
         </activity>
+
+        <activity
+            android:name=".apps.MainActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".apps.AppsActivity" />
+        </activity>
+
 
         <!-- Push notifications -->
         <service
@@ -52,8 +66,6 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-
-        <activity android:name=".main.AppDetailActivity"></activity>
     </application>
 
 </manifest>

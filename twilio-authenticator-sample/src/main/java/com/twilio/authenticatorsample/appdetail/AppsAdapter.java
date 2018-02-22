@@ -1,4 +1,4 @@
-package com.twilio.authenticatorsample.totp;
+package com.twilio.authenticatorsample.appdetail;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -21,7 +21,7 @@ public class AppsAdapter extends RecyclerView.Adapter<AppsAdapter.ViewHolder> {
     private final OnClickListener clickListener;
 
     public interface OnClickListener {
-        void onTokenClicked(App app);
+        void onAppClicked(App app);
     }
 
     private List<App> apps;
@@ -47,7 +47,7 @@ public class AppsAdapter extends RecyclerView.Adapter<AppsAdapter.ViewHolder> {
         holder.rootView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                clickListener.onTokenClicked(apps.get(position));
+                clickListener.onAppClicked(apps.get(position));
             }
         });
     }
@@ -57,31 +57,45 @@ public class AppsAdapter extends RecyclerView.Adapter<AppsAdapter.ViewHolder> {
         return apps == null ? 0 : apps.size();
     }
 
-    public void addApp(App app) {
-        apps.add(app);
+    public void addApps(List<App> apps) {
+        this.apps.addAll(apps);
         notifyDataSetChanged();
     }
 
-    public void removeApp(String appId) {
+    private void removeApp(Long appId) {
         Iterator<App> iterator = apps.iterator();
         while (iterator.hasNext()) {
             App app = iterator.next();
-            if (app.getId().equals(appId)) {
+            if (app.getId() == appId) {
                 iterator.remove();
                 break;
             }
         }
-        notifyDataSetChanged();
     }
 
-    public void updateApp(App authenticatorToken) {
-        removeApp(authenticatorToken.getId());
-        addApp(authenticatorToken);
+    public void removeApps(List<Long> appIds) {
+        for (Long appId: appIds) {
+            removeApp(appId);
+        }
+
         notifyDataSetChanged();
+
     }
 
-    public void setApps(List<App> authenticatorTokens) {
-        this.apps = authenticatorTokens;
+    public void updateApps(List<App> apps) {
+
+        for (App app: apps) {
+            removeApp(app.getId());
+            this.apps.add(app);
+        }
+
+        notifyDataSetChanged();
+
+    }
+
+    public void setApps(List<App> apps) {
+        this.apps = apps;
+        notifyDataSetChanged();
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {

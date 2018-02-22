@@ -29,6 +29,7 @@ import com.twilio.authenticatorsample.approvalrequests.adapters.ApprovalRequests
 import com.twilio.authenticatorsample.approvalrequests.detail.ApprovalRequestDetailActivity;
 import com.twilio.authenticatorsample.approvalrequests.events.ApprovalRequestsUpdatedEvent;
 import com.twilio.authenticatorsample.approvalrequests.events.RefreshApprovalRequestsEvent;
+import com.twilio.authenticatorsample.apps.AppsActivity;
 import com.twilio.authenticatorsample.registration.RegistrationActivity;
 import com.twilio.authenticatorsample.utils.MessageHelper;
 
@@ -39,7 +40,7 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class RequestsFragment extends Fragment implements
+public class ApprovalRequestsFragment extends Fragment implements
         TwilioAuthenticatorTaskCallback<ApprovalRequests>,
         ApprovalRequestsListFragment.ApprovalRequestsSource,
         ApprovalRequestsAdapter.ApprovalRequestSelectedListener {
@@ -54,24 +55,25 @@ public class RequestsFragment extends Fragment implements
     private MessageHelper messageHelper;
 
     private ApprovalRequests approvalRequests;
-
-    public RequestsFragment() {
-        // Required empty public constructor
-    }
+    private Long appId;
 
     /**
-     * Use this factory method to create a new instance of Requests fragment
+     * Use this factory method to create a new instance of ApprovalRequestsFragment fragment
      *
-     * @return A new instance of fragment RequestsFragment.
+     * @return A new instance of fragment ApprovalRequestsFragment.
      */
-    public static RequestsFragment newInstance() {
-        return new RequestsFragment();
+    public static ApprovalRequestsFragment newInstance(Long appId) {
+        ApprovalRequestsFragment approvalRequestsFragment = new ApprovalRequestsFragment();
+        Bundle args = new Bundle();
+        args.putLong(AppsActivity.EXTRA_APP_ID, appId);
+        approvalRequestsFragment.setArguments(args);
+        return approvalRequestsFragment;
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_requests, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_approval_requests, container, false);
         initViews(rootView);
         initVars();
         return rootView;
@@ -104,8 +106,13 @@ public class RequestsFragment extends Fragment implements
 
     @Override
     public void onError(Exception exception) {
-        Log.e(RequestsFragment.class.getSimpleName(), "Error while getting approval requests for device", exception);
-        String errorMessage = exception instanceof TwilioException ? ((TwilioException) exception).getBody() : getString(R.string.approval_request_fetch_error);
+        Log.e(ApprovalRequestsFragment.class.getSimpleName(), "Error while getting approval requests for device", exception);
+
+        String errorMessage = getString(R.string.approval_request_fetch_error);
+        if (exception instanceof TwilioException && !((TwilioException) exception).getBody().isEmpty()) {
+            errorMessage = ((TwilioException) exception).getBody();
+        }
+
         final Snackbar snackbar = messageHelper.show(viewPager, errorMessage);
         bus.post(new ApprovalRequestsUpdatedEvent(true));
 
@@ -174,17 +181,16 @@ public class RequestsFragment extends Fragment implements
 
     private void initVars() {
         SampleApp sampleApp = (SampleApp) getActivity().getApplicationContext();
-        twilioAuthenticator = (sampleApp).getTwilioAuthenticator();
-
         bus = (sampleApp).getBus();
-
         messageHelper = new MessageHelper();
+        twilioAuthenticator = sampleApp.getTwilioAuthenticator();
+        appId = getArguments().getLong(AppsActivity.EXTRA_APP_ID);
     }
 
     private void fetchApprovalRequests() {
         final List<ApprovalRequestStatus> statuses = Arrays.asList(ApprovalRequestStatus.approved, ApprovalRequestStatus.denied, ApprovalRequestStatus.expired, ApprovalRequestStatus.pending);
 
-        twilioAuthenticator.getApprovalRequests(statuses, null, this);
+        twilioAuthenticator.getApprovalRequests(appId, statuses, null, this);
     }
     public ApprovalRequests getApprovalRequests() {
         if (approvalRequests == null) {

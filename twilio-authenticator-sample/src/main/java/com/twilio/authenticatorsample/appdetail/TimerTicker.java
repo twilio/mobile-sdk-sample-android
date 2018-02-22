@@ -1,4 +1,4 @@
-package com.twilio.authenticatorsample.totp;
+package com.twilio.authenticatorsample.appdetail;
 
 import android.os.Handler;
 import android.os.Message;
@@ -8,7 +8,7 @@ import java.lang.ref.WeakReference;
 /**
  * A Timer that posts messages to a handler every {@link #tickIntervalInMillis} milliseconds. You
  * can subscribe to be notified on every tick using the
- * {@link #setOnTickListener(com.twilio.authenticatorsample.totp.TimerTicker.OnTickListener)} method
+ * {@link #setOnTickListener(com.twilio.authenticatorsample.appdetail.TimerTicker.OnTickListener)} method
  */
 public class TimerTicker {
 
