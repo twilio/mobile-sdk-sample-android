@@ -100,6 +100,10 @@ public class MockTwilioAuthenticator implements TwilioAuthenticator {
 
 
     private void notifyListener() {
+        if (apps == null || apps.size() == 0) {
+            return;
+        }
+
         if (multiAppListener != null) {
             multiAppListener.onNewCode(apps);
         }
