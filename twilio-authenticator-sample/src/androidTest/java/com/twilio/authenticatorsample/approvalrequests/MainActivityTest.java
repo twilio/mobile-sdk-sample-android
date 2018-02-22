@@ -6,13 +6,16 @@ import android.support.test.espresso.contrib.RecyclerViewActions;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
+import com.twilio.authenticator.external.App;
 import com.twilio.authenticator.external.ApprovalRequestStatus;
 import com.twilio.authenticator.external.ApprovalRequests;
 import com.twilio.authenticatorsample.R;
+import com.twilio.authenticatorsample.apps.AppsActivity;
 import com.twilio.authenticatorsample.apps.MainActivity;
 import com.twilio.authenticatorsample.matchers.RecyclerViewItemCountAssertion;
 import com.twilio.authenticatorsample.matchers.RecyclerViewItemMatcher;
 import com.twilio.authenticatorsample.matchers.ToolbarTitleMatcher;
+import com.twilio.authenticatorsample.mocks.MockApp;
 import com.twilio.authenticatorsample.mocks.MockApprovalRequest;
 import com.twilio.authenticatorsample.mocks.MockApprovalRequests;
 import com.twilio.authenticatorsample.mocks.MockTwilioAuthenticator;
@@ -23,7 +26,9 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import static android.support.test.InstrumentationRegistry.getTargetContext;
 import static android.support.test.espresso.Espresso.onView;
@@ -90,14 +95,22 @@ public class MainActivityTest {
         approvalRequests.getDenied().add(builder.createMockApprovalRequest());
         mockTwilioAuthenticator.setApprovalRequests(approvalRequests);
         Intent mainActivityIntent = new Intent(getTargetContext(), MainActivity.class);
-        mainActivityIntent.putExtra("APP_NAME", "Test App");
+        mainActivityIntent.putExtra(AppsActivity.EXTRA_APP_ID, 1L);
         mainActivityTestRule.launchActivity(mainActivityIntent);
     }
 
     @Test
     public void testRequestsViewPendingTab() throws Exception {
+        final List<App> apps = new ArrayList<>();
+        apps.add(new MockApp(1L, "Test App"));
+        mainActivityTestRule.getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mockTwilioAuthenticator.setApps(apps);
+            }
+        });
         // Check that the correct title is used
-        CharSequence activityTitle = "Test App " + getTargetContext().getString(R.string.menu_navigation_requests);
+        CharSequence activityTitle = "Test App " + getTargetContext().getString(R.string.menu_navigation_approval_requests);
         onView(withId(R.id.toolbar)).check(matches(new ToolbarTitleMatcher(is(activityTitle))));
 
         // Check initial state with two tabs
