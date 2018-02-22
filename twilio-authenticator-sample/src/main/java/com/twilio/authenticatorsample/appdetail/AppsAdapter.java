@@ -86,15 +86,15 @@ public class AppsAdapter extends RecyclerView.Adapter<AppsAdapter.ViewHolder> {
 
         for (App app: apps) {
             removeApp(app.getId());
-            apps.add(app);
+            this.apps.add(app);
         }
 
         notifyDataSetChanged();
 
     }
 
-    public void setApps(List<App> authenticatorTokens) {
-        this.apps = authenticatorTokens;
+    public void setApps(List<App> apps) {
+        this.apps = apps;
         notifyDataSetChanged();
     }
 

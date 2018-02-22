@@ -14,7 +14,7 @@ import com.twilio.authenticator.TwilioAuthenticator;
 import com.twilio.authenticatorsample.R;
 import com.twilio.authenticatorsample.SampleApp;
 import com.twilio.authenticatorsample.appdetail.AppDetailFragment;
-import com.twilio.authenticatorsample.approvalrequests.RequestsFragment;
+import com.twilio.authenticatorsample.approvalrequests.ApprovalRequestsFragment;
 import com.twilio.authenticatorsample.registration.RegistrationActivity;
 import com.twilio.authenticatorsample.ui.ClearDataConfirmationDialog;
 import com.twilio.authenticatorsample.ui.ShowIdsDialog;
@@ -73,11 +73,11 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_requests) {
-            RequestsFragment requestsFragment = RequestsFragment.newInstance(appId);
+        if (id == R.id.nav_approval_requests) {
+            ApprovalRequestsFragment approvalRequestsFragment = ApprovalRequestsFragment.newInstance(appId);
             getSupportFragmentManager()
                     .beginTransaction()
-                    .replace(R.id.container, requestsFragment)
+                    .replace(R.id.container, approvalRequestsFragment)
                     .commit();
             getSupportActionBar().setTitle(appName + " " + getString(R.string.menu_navigation_requests));
         } else if (id == R.id.nav_tokens) {

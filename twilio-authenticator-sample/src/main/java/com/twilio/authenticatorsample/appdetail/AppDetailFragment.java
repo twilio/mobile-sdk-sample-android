@@ -43,9 +43,9 @@ public class AppDetailFragment extends Fragment implements TokenTimer.OnTimerLis
     private MessageHelper messageHelper;
 
     /**
-     * Use this factory method to create a new instance of Requests fragment
+     * Use this factory method to create a new instance of AppDetail fragment
      *
-     * @return A new instance of fragment RequestsFragment.
+     * @return A new instance of AppDetailFragment.
      */
     public static AppDetailFragment newInstance(Long appId) {
         AppDetailFragment appDetailFragment = new AppDetailFragment();
