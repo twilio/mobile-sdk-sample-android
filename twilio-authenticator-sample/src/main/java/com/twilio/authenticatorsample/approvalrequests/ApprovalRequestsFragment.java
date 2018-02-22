@@ -40,7 +40,7 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class RequestsFragment extends Fragment implements
+public class ApprovalRequestsFragment extends Fragment implements
         TwilioAuthenticatorTaskCallback<ApprovalRequests>,
         ApprovalRequestsListFragment.ApprovalRequestsSource,
         ApprovalRequestsAdapter.ApprovalRequestSelectedListener {
@@ -58,22 +58,22 @@ public class RequestsFragment extends Fragment implements
     private Long appId;
 
     /**
-     * Use this factory method to create a new instance of Requests fragment
+     * Use this factory method to create a new instance of ApprovalRequestsFragment fragment
      *
-     * @return A new instance of fragment RequestsFragment.
+     * @return A new instance of fragment ApprovalRequestsFragment.
      */
-    public static RequestsFragment newInstance(Long appId) {
-        RequestsFragment requestsFragment = new RequestsFragment();
+    public static ApprovalRequestsFragment newInstance(Long appId) {
+        ApprovalRequestsFragment approvalRequestsFragment = new ApprovalRequestsFragment();
         Bundle args = new Bundle();
         args.putLong(AppsActivity.EXTRA_APP_ID, appId);
-        requestsFragment.setArguments(args);
-        return requestsFragment;
+        approvalRequestsFragment.setArguments(args);
+        return approvalRequestsFragment;
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_requests, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_approval_requests, container, false);
         initViews(rootView);
         initVars();
         return rootView;
@@ -106,7 +106,7 @@ public class RequestsFragment extends Fragment implements
 
     @Override
     public void onError(Exception exception) {
-        Log.e(RequestsFragment.class.getSimpleName(), "Error while getting approval requests for device", exception);
+        Log.e(ApprovalRequestsFragment.class.getSimpleName(), "Error while getting approval requests for device", exception);
 
         String errorMessage = getString(R.string.approval_request_fetch_error);
         if (exception instanceof TwilioException && !((TwilioException) exception).getBody().isEmpty()) {
