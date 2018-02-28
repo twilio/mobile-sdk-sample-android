@@ -1,6 +1,3 @@
-## JIRA
-https://issues.corp.twilio.com/browse/{JIRA Ticket Number}
-
 ## Changes
 `TODO`
 
