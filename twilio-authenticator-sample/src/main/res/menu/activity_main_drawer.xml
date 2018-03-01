@@ -6,8 +6,8 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_approval_requests"
-            android:icon="@drawable/ic_menu_requests"
-            android:title="@string/menu_navigation_requests" />
+            android:icon="@drawable/ic_menu_approval_requests"
+            android:title="@string/menu_navigation_approval_requests" />
         <item
             android:id="@+id/nav_tokens"
             android:icon="@drawable/ic_menu_tokens"

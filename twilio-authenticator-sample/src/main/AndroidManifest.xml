@@ -35,12 +35,13 @@
             android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".apps.AppsActivity" />
+                android:value=".apps.MainActivity" />
         </activity>
 
         <activity
             android:name=".apps.MainActivity"
             android:label="@string/app_name"
+            android:parentActivityName=".apps.AppsActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data

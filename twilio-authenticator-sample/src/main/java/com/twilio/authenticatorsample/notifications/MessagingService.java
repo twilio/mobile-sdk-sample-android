@@ -21,6 +21,8 @@ import com.twilio.authenticatorsample.R;
 import com.twilio.authenticatorsample.SampleApp;
 import com.twilio.authenticatorsample.approvalrequests.detail.ApprovalRequestDetailActivity;
 import com.twilio.authenticatorsample.approvalrequests.events.RefreshApprovalRequestsEvent;
+import com.twilio.authenticatorsample.apps.AppsActivity;
+import com.twilio.authenticatorsample.apps.MainActivity;
 
 import java.util.Map;
 
@@ -78,6 +80,14 @@ public class MessagingService extends FirebaseMessagingService {
                 Intent intent = ApprovalRequestDetailActivity.createIntent(MessagingService.this, approvalRequest);
                 stackBuilder.addNextIntent(intent);
 
+                // Make sure that we set the right app id on the MainActivity
+                Intent[] intents = stackBuilder.getIntents();
+                for (int i = 0; i < intents.length; i++) {
+                    Intent currentIntent = stackBuilder.editIntentAt(i);
+                    if (currentIntent.getComponent().getClassName().equals(MainActivity.class.getName())) {
+                        currentIntent.putExtra(AppsActivity.EXTRA_APP_ID, approvalRequest.getAppId());
+                    }
+                }
                 PendingIntent pendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
 
                 Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);

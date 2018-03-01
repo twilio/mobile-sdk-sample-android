@@ -9,7 +9,7 @@
 
     <!-- Main Activity -->
     <string name="menu_navigation_tokens">Tokens</string>
-    <string name="menu_navigation_requests">Requests</string>
+    <string name="menu_navigation_approval_requests">Requests</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 

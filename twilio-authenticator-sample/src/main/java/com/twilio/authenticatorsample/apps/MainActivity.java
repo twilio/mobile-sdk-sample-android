@@ -11,6 +11,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.twilio.authenticator.TwilioAuthenticator;
+import com.twilio.authenticator.external.App;
+import com.twilio.authenticator.external.MultiAppListener;
 import com.twilio.authenticatorsample.R;
 import com.twilio.authenticatorsample.SampleApp;
 import com.twilio.authenticatorsample.appdetail.AppDetailFragment;
@@ -19,23 +21,25 @@ import com.twilio.authenticatorsample.registration.RegistrationActivity;
 import com.twilio.authenticatorsample.ui.ClearDataConfirmationDialog;
 import com.twilio.authenticatorsample.ui.ShowIdsDialog;
 
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, ClearDataConfirmationDialog.OnClearDataConfirmationListener {
+        implements NavigationView.OnNavigationItemSelectedListener, ClearDataConfirmationDialog.OnClearDataConfirmationListener, MultiAppListener {
 
     private TwilioAuthenticator twilioAuthenticator;
     private DrawerLayout drawer;
     private NavigationView navigationView;
     private Toolbar toolbar;
     private Long appId;
-    private String appName;
+    private int currentNavigationItem = R.id.nav_approval_requests;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initViews();
-        initListeners();
         initVars();
+        initListeners();
     }
 
     @Override
@@ -71,22 +75,20 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
-        int id = item.getItemId();
+        currentNavigationItem = item.getItemId();
 
-        if (id == R.id.nav_approval_requests) {
+        if (currentNavigationItem == R.id.nav_approval_requests) {
             ApprovalRequestsFragment approvalRequestsFragment = ApprovalRequestsFragment.newInstance(appId);
             getSupportFragmentManager()
                     .beginTransaction()
                     .replace(R.id.container, approvalRequestsFragment)
                     .commit();
-            getSupportActionBar().setTitle(appName + " " + getString(R.string.menu_navigation_requests));
-        } else if (id == R.id.nav_tokens) {
+        } else if (currentNavigationItem == R.id.nav_tokens) {
             AppDetailFragment appDetailFragment = AppDetailFragment.newInstance(appId);
             getSupportFragmentManager()
                     .beginTransaction()
                     .replace(R.id.container, appDetailFragment)
                     .commit();
-            getSupportActionBar().setTitle(appName + " " + getString(R.string.menu_navigation_tokens));
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -98,6 +100,35 @@ public class MainActivity extends AppCompatActivity
     public void onClearDataRequested() {
         twilioAuthenticator.clearLocalData();
         RegistrationActivity.startRegistrationActivity(this, R.string.registration_error_device_deleted);
+    }
+
+    @Override
+    public void onNewCode(List<App> apps) {
+        for (App app : apps) {
+            if (app.getId() == appId) {
+                updateTitle(app.getName());
+            }
+        }
+    }
+
+    @Override
+    public void onAppAdded(List<App> apps) {
+
+    }
+
+    @Override
+    public void onAppDeleted(List<Long> appIds) {
+
+    }
+
+    @Override
+    public void onAppUpdated(List<App> apps) {
+
+    }
+
+    @Override
+    public void onError(Exception exception) {
+
     }
 
     private void initViews() {
@@ -115,15 +146,24 @@ public class MainActivity extends AppCompatActivity
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
+
+        twilioAuthenticator.setMultiAppListener(this);
     }
 
     private void initVars() {
         twilioAuthenticator = ((SampleApp) getApplicationContext()).getTwilioAuthenticator();
         appId = getIntent().getLongExtra(AppsActivity.EXTRA_APP_ID, 0);
-        appName = getIntent().getStringExtra(AppsActivity.EXTRA_APP_NAME);
 
         // Select the first item by default
         onNavigationItemSelected(navigationView.getMenu().getItem(0));
     }
 
+
+    private void updateTitle(String appName) {
+        if (currentNavigationItem == R.id.nav_approval_requests) {
+            getSupportActionBar().setTitle(appName + " " + getString(R.string.menu_navigation_approval_requests));
+        } else if (currentNavigationItem == R.id.nav_tokens) {
+            getSupportActionBar().setTitle(appName + " " + getString(R.string.menu_navigation_tokens));
+        }
+    }
 }

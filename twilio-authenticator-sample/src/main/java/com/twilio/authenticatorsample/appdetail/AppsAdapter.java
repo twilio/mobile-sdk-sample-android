@@ -84,12 +84,12 @@ public class AppsAdapter extends RecyclerView.Adapter<AppsAdapter.ViewHolder> {
 
     public void updateApps(List<App> apps) {
 
-        for (App app: apps) {
+        for (int i = 0; i < apps.size(); i++) {
+            App app = apps.get(i);
             removeApp(app.getId());
             this.apps.add(app);
+            notifyItemChanged(i);
         }
-
-        notifyDataSetChanged();
 
     }
 
