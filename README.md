@@ -24,9 +24,14 @@ mvn install:install-file \
    -DpomFile=authenticator-2.0.0-preview.pom
 ```
 
-* **Step 4:** [A backend application to handle the device registration](https://www.twilio.com/docs/quickstart/twilioauth-sdk-quickstart-tutorials/running-sample-app)
+If you need maven client installed you can easily do it by running
+```
+brew install maven
+```
 
-* **Step 4:** Setup your firebase account, downloading the `google-services.json` configuration file following [this link](https://firebase.google.com/docs/android/setup)
+* **Step 4:** [A backend application to handle the device registration](https://github.com/authy/authenticator-sdk-backend)
+
+* **Step 5:** Setup your firebase account, downloading the `google-services.json` configuration file following [this link](https://firebase.google.com/docs/android/setup)
 
 ### Learn more
 - Check out the full documentation at https://www.twilio.com/docs/quickstart/twilioauth-sdk-quickstart-tutorials
