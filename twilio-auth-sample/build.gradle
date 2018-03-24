@@ -42,6 +42,7 @@ android {
 }
 
 dependencies {
+    compile project(':authenticator')
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.twilio:authenticator:1.2.1'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'

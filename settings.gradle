@@ -1,1 +1,4 @@
-include ':twilio-auth-sample'
+include ':twilio-auth-sample', ':authenticator'
+include ':authenticator', ':authy-common-android'
+project(':authenticator').projectDir = new File('../twilio-authenticator/authenticator')
+project(':authy-common-android').projectDir = new File('../authy-common-android/authy-common-android')
